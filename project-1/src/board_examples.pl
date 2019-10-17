@@ -11,8 +11,8 @@ intermediateBoard([
 ]).
 
 finalBoard([
-        [empty, queenBlack, empty, empty],
-        [towerBlack, kingBlack, towerWhite, bishopBlack],
-        [empty, kingWhite, empty, empty],
-        [queenWhite, horseBlack, empty, horseWhite]
+    [empty, queenBlack, empty, empty],
+    [towerBlack, kingBlack, towerWhite, bishopBlack],
+    [empty, kingWhite, empty, empty],
+    [queenWhite, horseBlack, empty, horseWhite]
 ]).
