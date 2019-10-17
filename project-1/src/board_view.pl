@@ -28,41 +28,46 @@ printBoard(Board):-
     nl,
     write('   |'),
     nth0(0, Board, Line),
-    length(Line, Length),
-    printTopBorder(Length),
-    printMatrix(Board),
+    length(Line, Width),
+    printTopBorder(1, Width),
+    nl,
+    printHorizontalSeparator(Width + 1),
+    nl,
+    length(Board, Height),
+    printMatrix(Board, 1, Height),
     nl.
 
 printTopBorder(Acc, N):-
     Acc > N.
 
-printTopBorder(N):-
+printTopBorder(Acc, N):-
     write(' '),
-    write(N),
+    write(Acc),
     write(' |'),
-    N1 is N - 1,
-    printTopBorder(N1).
+    Acc1 is Acc + 1,
+    printTopBorder(Acc1, N).
 
-printHorizontalSeparator([], 0).
-printHorizontalSeparator([Cell | Line], N):-
+printHorizontalSeparator(0).
+printHorizontalSeparator(N):-
     write('---|'),
     N1 is N - 1,
-    printHorizontalSeparator(Line, N1).
+    printHorizontalSeparator(N1).
 
-printMatrix([], 0).
-printMatrix([Line | Board], N):-
+printMatrix([], _, 0).
+printMatrix([Line | Board], Acc, N):-
     write(' '),
-    letter(N, Letter),
+    letter(Acc, Letter),
     write(Letter),
-    N1 is N - 1,
-    write(' L '),
+    Acc1 is Acc + 1,
+    write(' | '),
     printLine(Line),
     nl,
-    length(Board, Length),
+    length(Line, Length),
     TrueLength is Length + 1,
-    printHorizontalSeparator(Line, TrueLength),
+    N1 is N - 1,
+    printHorizontalSeparator(TrueLength),
     nl,
-    printMatrix(Board, N1).
+    printMatrix(Board, Acc1, N1).
 
 printLine([]).
 printLine([Cell | Line]):-
