@@ -23,6 +23,8 @@ letter(1, 'A').
 letter(2, 'B').
 letter(3, 'C').
 letter(4, 'D').
+letter(5, 'E').
+letter(6, 'F').
 
 printBoard(Board):-
     nl,
