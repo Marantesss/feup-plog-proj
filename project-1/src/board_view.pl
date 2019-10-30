@@ -1,7 +1,10 @@
 :-include('board_examples.pl').
 :-use_module(library(lists)).
 
-translate(empty, '.').
+
+%---------------------------------------------------%
+%------------------ BOARD PIECES -------------------%
+%---------------------------------------------------%
 
 % Pieces
 translate(king, 'k').
@@ -10,6 +13,7 @@ translate(bishop, 'b').
 translate(tower, 't').
 translate(horse, 'h').
 translate(pawn, 'p').
+translate(empty, '.').
 
 % Color
 translate(black, 'B').
@@ -23,12 +27,9 @@ letter(4, 'D').
 letter(5, 'E').
 letter(6, 'F').
 
-test(Piece-Color):-
-    translate(Piece-Color, Char),
-    write(Char),
-    translate(Color, Char2),
-    write(Char2),
-    nl.
+%---------------------------------------------------%
+%------------------ BOARD DISPLAY ------------------%
+%---------------------------------------------------%
 
 printBoard(Board):-
     nl,
@@ -87,6 +88,40 @@ printCell(Piece-Color):-
     translate(Color, Char2),
     write(Char2).
 
+%---------------------------------------------------%
+%----------------- BOARD REARRANGE -----------------%
+%---------------------------------------------------%
+
+removeTopRow([TopRow | Board], Board).
+
+removeBottomRow([TopRow | OldBoard], NewBoard) :-
+    removeBottomRowAux(OldBoard, NewBoard, TopRow).
+ 
+removeBottomRowAux([], [], _).
+removeBottomRowAux([X1|Xs], [X0|Ys], X0) :-
+    removeBottomRowAux(Xs, Ys, X1).
+
+
+removeLeftCollumn(OldBoard, NewBoard):-
+    length(OldBoard, RowNumber),
+    removeLeftCollumnAux(OldBoard, NewBoard, RowNumber).
+
+removeLeftCollumnAux(_, _, 0).
+removeLeftCollumnAux([Row | Board], [NewRow | NewBoard], N):-
+    removeTopRow(Row, NewRow),      % removes left cell in row
+    N1 is N-1,
+    removeAux(Board, NewBoard, N1).
+
+
+removeRightCollumn(OldBoard, NewBoard):-
+    length(OldBoard, RowNumber),
+    removeRightCollumnAux(OldBoard, NewBoard, RowNumber).
+
+removeRightCollumnAux(_, _, 0).
+removeRightCollumnAux([Row | Board], [NewRow | NewBoard], N):-
+    removeBottomRow(Row, NewRow),      % removes right cell in row
+    N1 is N-1,
+    removeRightCollumnAux(Board, NewBoard, N1).
 
 /* Predicados uteis:
 nth0, nth1 -> usar o google :)
