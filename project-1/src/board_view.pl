@@ -2,21 +2,18 @@
 :-use_module(library(lists)).
 
 translate(empty, '.').
-% Black pieces
-translate(kingBlack, 'k').
-translate(queenBlack, 'q').
-translate(bishopBlack, 'b').
-translate(towerBlack, 't').
-translate(horseBlack, 'h').
-translate(pawnBlack, 'p').
 
-% White pieces
-translate(kingWhite, 'K').
-translate(queenWhite, 'Q').
-translate(bishopWhite, 'B').
-translate(towerWhite, 'T').
-translate(horseWhite, 'H').
-translate(pawnWhite, 'P').
+% Pieces
+translate(king, 'k').
+translate(queen, 'q').
+translate(bishop, 'b').
+translate(tower, 't').
+translate(horse, 'h').
+translate(pawn, 'p').
+
+% Color
+translate(black, 'B').
+translate(white, 'W').
 
 % numbers to letters for top row
 letter(1, 'A').
@@ -26,9 +23,16 @@ letter(4, 'D').
 letter(5, 'E').
 letter(6, 'F').
 
+test(Piece-Color):-
+    translate(Piece-Color, Char),
+    write(Char),
+    translate(Color, Char2),
+    write(Char2),
+    nl.
+
 printBoard(Board):-
     nl,
-    write('   |'),
+    write('    |'),
     nth0(0, Board, Line),
     length(Line, Width),
     printTopBorder(1, Width),
@@ -43,7 +47,7 @@ printTopBorder(Acc, N):-
     Acc > N.
 
 printTopBorder(Acc, N):-
-    write(' '),
+    write('  '),
     write(Acc),
     write(' |'),
     Acc1 is Acc + 1,
@@ -51,7 +55,7 @@ printTopBorder(Acc, N):-
 
 printHorizontalSeparator(0).
 printHorizontalSeparator(N):-
-    write('---|'),
+    write('----|'),
     N1 is N - 1,
     printHorizontalSeparator(N1).
 
@@ -61,7 +65,7 @@ printMatrix([Line | Board], Acc, N):-
     letter(Acc, Letter),
     write(Letter),
     Acc1 is Acc + 1,
-    write(' | '),
+    write('  | '),
     printLine(Line),
     nl,
     length(Line, Length),
@@ -77,9 +81,12 @@ printLine([Cell | Line]):-
     write(' | '),
     printLine(Line).
 
-printCell(Cell):-
-    translate(Cell, Char),
-    write(Char).
+printCell(Piece-Color):-
+    translate(Piece, Char),
+    write(Char),
+    translate(Color, Char2),
+    write(Char2).
+
 
 /* Predicados uteis:
 nth0, nth1 -> usar o google :)
