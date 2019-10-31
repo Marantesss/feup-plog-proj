@@ -108,7 +108,35 @@ isEmptyCollumn([Row | Board], ColNum):-
     nth1(ColNum, Row, Cell),
     isEmptyCell(Cell),
     isEmptyCollumn(Board, ColNum).
+
+% ---- Add Cells ----%
+
+getNewRow(3, [empty-empty, empty-empty, empty-empty]).
+getNewRow(4, [empty-empty, empty-empty, empty-empty, empty-empty]).
+getNewRow(5, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
+getNewRow(6, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
+
+addTopRow([Row | Board], NewBoard):-
+    length(Row, RowLength),
+    getNewRow(RowLength, NewEmptyRow),
+    append([NewEmptyRow], [Row | Board], NewBoard).
+
+addBottomRow([Row | Board], NewBoard):-
+    length(Row, RowLength),
+    getNewRow(RowLength, NewEmptyRow),
+    append([Row | Board], [NewEmptyRow], NewBoard).
+
+addLeftCollumn([], []).
+addLeftCollumn([Row | Board], [NewRow | NewBoard]):-
+    append([empty-empty], Row, NewRow),
+    addLeftCollumn(Board, NewBoard).
+
+addRightCollumn([], []).
+addRightCollumn([Row | Board], [NewRow | NewBoard]):-
+    append(Row, [empty-empty], NewRow),
+    addRightCollumn(Board, NewBoard).
     
+%---- Remove Cells ----%
 
 removeTopRow([TopRow | Board], Board).
 
