@@ -92,6 +92,24 @@ printCell(Piece-Color):-
 %----------------- BOARD REARRANGE -----------------%
 %---------------------------------------------------%
 
+isEmptyCell(empty-empty).
+
+isEmptyRowAux([]).
+isEmptyRowAux([Cell | Row]):-
+    isEmptyCell(Cell),
+    isEmptyRowAux(Row).
+
+isEmptyRow(Board, RowNum):-
+    nth1(RowNum, Board, Row),
+    isEmptyRowAux(Row).
+
+isEmptyCollumn([], ColNum).
+isEmptyCollumn([Row | Board], ColNum):-
+    nth1(ColNum, Row, Cell),
+    isEmptyCell(Cell),
+    isEmptyCollumn(Board, ColNum).
+    
+
 removeTopRow([TopRow | Board], Board).
 
 removeBottomRow([TopRow | OldBoard], NewBoard) :-
@@ -103,8 +121,8 @@ removeBottomRowAux([X1|Xs], [X0|Ys], X0) :-
 
 
 removeLeftCollumn(OldBoard, NewBoard):-
-    length(OldBoard, RowNumber),
-    removeLeftCollumnAux(OldBoard, NewBoard, RowNumber).
+    length(OldBoard, ColNumber),
+    removeLeftCollumnAux(OldBoard, NewBoard, ColNumber).
 
 removeLeftCollumnAux(_, _, 0).
 removeLeftCollumnAux([Row | Board], [NewRow | NewBoard], N):-
@@ -114,8 +132,8 @@ removeLeftCollumnAux([Row | Board], [NewRow | NewBoard], N):-
 
 
 removeRightCollumn(OldBoard, NewBoard):-
-    length(OldBoard, RowNumber),
-    removeRightCollumnAux(OldBoard, NewBoard, RowNumber).
+    length(OldBoard, ColNumber),
+    removeRightCollumnAux(OldBoard, NewBoard, ColNumber).
 
 removeRightCollumnAux(_, _, 0).
 removeRightCollumnAux([Row | Board], [NewRow | NewBoard], N):-
