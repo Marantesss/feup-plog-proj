@@ -92,6 +92,87 @@ printCell(Piece-Color):-
 %----------------- BOARD REARRANGE -----------------%
 %---------------------------------------------------%
 
+% TOP, BOT, LEFT and RIGHT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
+    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, BotBoard), % remove bottom row
+    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, [Row | LeftBoard]), % remove left column
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+
+% TOP, BOT and LEFT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
+    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, BotBoard), % remove bottom row
+    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, NewBoard). % remove left column
+
+% TOP, BOT and RIGHT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
+    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, [Row | BotBoard]), % remove bottom row
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | BotBoard], ActColNum), removeRightColumn([Row | BotBoard], NewBoard). % remove right column
+
+% BOT, LEFT and RIGHT
+rearrangeBoard(Board, NewBoard):-
+    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, BotBoard), % remove bottom row
+    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, [Row | LeftBoard]), % remove left column
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+
+% TOP, LEFT and RIGHT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
+    isEmptyColumn(TopBoard, 2), removeLeftColumn(TopBoard, [Row | LeftBoard]), % remove left column
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+
+% TOP and BOT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
+    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, NewBoard). % remove bottom row
+
+% TOP and LEFT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
+    isEmptyColumn(TopBoard, 2), removeLeftColumn(TopBoard, NewBoard). % remove left column
+
+% TOP and RIGHT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, [Row | TopBoard]), % remove top row
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | TopBoard], ActColNum), removeRightColumn([Row | TopBoard], NewBoard). % remove right column
+
+% BOT and LEFT
+rearrangeBoard(Board, NewBoard):-
+    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, BotBoard), % remove bottom row
+    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, NewBoard). % remove left column
+
+% BOT and RIGHT
+rearrangeBoard(Board, NewBoard):-
+    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, [Row | BotBoard]), % remove bottom row
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | BotBoard], ActColNum), removeRightColumn([Row | BotBoard], NewBoard). % remove right column
+
+% LEFT and RIGHT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyColumn(Board, 2), removeLeftColumn(Board, [Row | LeftBoard]), % remove left column
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+
+% TOP
+rearrangeBoard(Board, NewBoard):-
+    isEmptyRow(Board, 2), removeTopRow(Board, NewBoard). % remove top row
+
+% BOT
+rearrangeBoard(Board, NewBoard):-
+    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, NewBoard). % remove bottom row
+
+% LEFT
+rearrangeBoard(Board, NewBoard):-
+    isEmptyColumn(Board, 2), removeLeftColumn(Board, NewBoard). % remove left column
+
+% RIGHT
+rearrangeBoard([Row | Board], NewBoard):-
+    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | Board], ActColNum), removeRightColumn([Row | Board], NewBoard). % remove right column
+
+
+
+% ---- Empty Cconditions ----%
+
 isEmptyCell(empty-empty).
 
 isEmptyRowAux([]).
@@ -103,11 +184,11 @@ isEmptyRow(Board, RowNum):-
     nth1(RowNum, Board, Row),
     isEmptyRowAux(Row).
 
-isEmptyCollumn([], ColNum).
-isEmptyCollumn([Row | Board], ColNum):-
+isEmptyColumn([], ColNum).
+isEmptyColumn([Row | Board], ColNum):-
     nth1(ColNum, Row, Cell),
     isEmptyCell(Cell),
-    isEmptyCollumn(Board, ColNum).
+    isEmptyColumn(Board, ColNum).
 
 % ---- Add Cells ----%
 
@@ -126,15 +207,15 @@ addBottomRow([Row | Board], NewBoard):-
     getNewRow(RowLength, NewEmptyRow),
     append([Row | Board], [NewEmptyRow], NewBoard).
 
-addLeftCollumn([], []).
-addLeftCollumn([Row | Board], [NewRow | NewBoard]):-
+addLeftColumn([], []).
+addLeftColumn([Row | Board], [NewRow | NewBoard]):-
     append([empty-empty], Row, NewRow),
-    addLeftCollumn(Board, NewBoard).
+    addLeftColumn(Board, NewBoard).
 
-addRightCollumn([], []).
-addRightCollumn([Row | Board], [NewRow | NewBoard]):-
+addRightColumn([], []).
+addRightColumn([Row | Board], [NewRow | NewBoard]):-
     append(Row, [empty-empty], NewRow),
-    addRightCollumn(Board, NewBoard).
+    addRightColumn(Board, NewBoard).
     
 %---- Remove Cells ----%
 
@@ -148,26 +229,26 @@ removeBottomRowAux([X1|Xs], [X0|Ys], X0) :-
     removeBottomRowAux(Xs, Ys, X1).
 
 
-removeLeftCollumn(OldBoard, NewBoard):-
+removeLeftColumn(OldBoard, NewBoard):-
     length(OldBoard, ColNumber),
-    removeLeftCollumnAux(OldBoard, NewBoard, ColNumber).
+    removeLeftColumnAux(OldBoard, NewBoard, ColNumber).
 
-removeLeftCollumnAux(_, _, 0).
-removeLeftCollumnAux([Row | Board], [NewRow | NewBoard], N):-
+removeLeftColumnAux(_, _, 0).
+removeLeftColumnAux([Row | Board], [NewRow | NewBoard], N):-
     removeTopRow(Row, NewRow),      % removes left cell in row
     N1 is N-1,
-    removeAux(Board, NewBoard, N1).
+    removeLeftColumnAux(Board, NewBoard, N1).
 
 
-removeRightCollumn(OldBoard, NewBoard):-
+removeRightColumn(OldBoard, NewBoard):-
     length(OldBoard, ColNumber),
-    removeRightCollumnAux(OldBoard, NewBoard, ColNumber).
+    removeRightColumnAux(OldBoard, NewBoard, ColNumber).
 
-removeRightCollumnAux(_, _, 0).
-removeRightCollumnAux([Row | Board], [NewRow | NewBoard], N):-
+removeRightColumnAux(_, _, 0).
+removeRightColumnAux([Row | Board], [NewRow | NewBoard], N):-
     removeBottomRow(Row, NewRow),      % removes right cell in row
     N1 is N-1,
-    removeRightCollumnAux(Board, NewBoard, N1).
+    removeRightColumnAux(Board, NewBoard, N1).
 
 /* Predicados uteis:
 nth0, nth1 -> usar o google :)
