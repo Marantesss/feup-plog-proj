@@ -60,11 +60,11 @@ printHorizontalSeparator(N):-
 
 printMatrix([], _, 0).
 printMatrix([Line | Board], Acc, N):-
-    write(' '),
+    write('  '),
     letter(Acc, Letter),
     write(Letter),
     Acc1 is Acc + 1,
-    write('  | '),
+    write(' | '),
     printLine(Line),
     nl,
     length(Line, Length),
