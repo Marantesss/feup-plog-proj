@@ -18,12 +18,12 @@ translate(black, 'B').
 translate(white, 'W').
 
 % numbers to letters for top row
-letter(1, 'A').
-letter(2, 'B').
-letter(3, 'C').
-letter(4, 'D').
-letter(5, 'E').
-letter(6, 'F').
+letter(1, a).
+letter(2, b).
+letter(3, c).
+letter(4, d).
+letter(5, e).
+letter(6, f).
 
 %---------------------------------------------------%
 %------------------ BOARD DISPLAY ------------------%

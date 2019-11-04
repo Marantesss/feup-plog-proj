@@ -181,21 +181,13 @@ cleanBoardAdd([Row | Board], NewBoard):-
 
 % ---- Aux Functions ---- %
 
-% letters to numbers for column naming
-rowNumber('A', 1).
-rowNumber('B', 2).
-rowNumber('C', 3).
-rowNumber('D', 4).
-rowNumber('E', 5).
-rowNumber('F', 6).
-
 getCell(Board, ColNum-RowLet, Cell):-
-    rowNumber(RowLet, RowNum), % get row number
+    letter(RowNum, RowLet), % get row number
     nth1(RowNum, Board, Row), % get row
     nth1(ColNum, Row, Cell). % get cell
 
 replaceCell(Board, NewCell, ColNum-RowLet, NewBoard):-
-    rowNumber(RowLet, RowNum), % get row number
+    letter(RowNum, RowLet), % get row number
     nth1(RowNum, Board, Row), % get row
     replace(Row, ColNum, NewCell, NewRow), % replace cell in row
     replace(Board, RowNum, NewRow, NewBoard). % replace row in board
