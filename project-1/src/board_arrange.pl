@@ -179,9 +179,29 @@ cleanBoardAdd([Row | Board], NewBoard):-
     length(Row, ColNum), \+isEmptyColumn([Row | Board], ColNum), addRightColumn([Row | Board], NewBoard). % add right column
 
 
-% ---- Empty Conditions ----%
+% ---- Aux Functions ---- %
+
+% letters to numbers for top row
+rowNumber('A', 1).
+rowNumber('B', 2).
+rowNumber('C', 3).
+rowNumber('D', 4).
+rowNumber('E', 5).
+rowNumber('F', 6).
+
+
+getCell(Board, ColNum-RowLet, Cell):-
+    rowNumber(RowLet, RowNum), % get row number
+    nth1(RowNum, Board, Row), % get row
+    nth1(ColNum, Row, Cell). % get cell
+
+% ---- Empty Conditions ---- %
 
 isEmptyCell(empty-empty).
+
+isEmptyCellCoords(Board, ColNum-RowLet):-
+    getCell(Board, ColNum-RowLet, Cell),
+    isEmptyCell(Cell).
 
 isEmptyRowAux([]).
 isEmptyRowAux([Cell | Row]):-
