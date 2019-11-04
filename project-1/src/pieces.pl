@@ -1,4 +1,4 @@
-:-include('board_arrange.pl').
+:-include('board_dynamic.pl').
 
 %---------------------------------------------------%
 %----------------- Piece Placement -----------------%
