@@ -1,29 +1,17 @@
 :-include('board_examples.pl').
+:-include('utils.pl').
 
 %---------------------------------------------------%
-%------------------ BOARD PIECES -------------------%
+%------------------- MENU STUFF --------------------%
 %---------------------------------------------------%
 
-% Pieces
-translate(king, 'k').
-translate(queen, 'q').
-translate(bishop, 'b').
-translate(tower, 't').
-translate(horse, 'h').
-translate(pawn, 'p').
-translate(empty, '.').
+printEchekHeader:-
+    write('----------------------'), nl,
+    write('--- ASCII ART HERE ---'), nl,
+    write('-------- Echek -------'), nl,
+    write('----------------------').
 
-% Color
-translate(black, 'B').
-translate(white, 'W').
-
-% numbers to letters for top row
-letter(1, 'A').
-letter(2, 'B').
-letter(3, 'C').
-letter(4, 'D').
-letter(5, 'E').
-letter(6, 'F').
+printOptions.
 
 %---------------------------------------------------%
 %------------------ BOARD DISPLAY ------------------%
@@ -60,11 +48,11 @@ printHorizontalSeparator(N):-
 
 printMatrix([], _, 0).
 printMatrix([Line | Board], Acc, N):-
-    write(' '),
+    write('  '),
     letter(Acc, Letter),
     write(Letter),
     Acc1 is Acc + 1,
-    write('  | '),
+    write(' | '),
     printLine(Line),
     nl,
     length(Line, Length),

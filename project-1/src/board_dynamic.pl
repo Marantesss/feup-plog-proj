@@ -1,4 +1,4 @@
-:-include('board_view.pl').
+:-include('utils.pl').
 
 %---------------------------------------------------%
 %----------------- MAIN FUNCTION  ------------------%
@@ -179,9 +179,30 @@ cleanBoardAdd([Row | Board], NewBoard):-
     length(Row, ColNum), \+isEmptyColumn([Row | Board], ColNum), addRightColumn([Row | Board], NewBoard). % add right column
 
 
-% ---- Empty Conditions ----%
+% ---- Aux Functions ---- %
+
+getCell(Board, ColNum-RowNum, Cell):-
+    nth1(RowNum, Board, Row), % get row
+    nth1(ColNum, Row, Cell). % get cell
+
+replaceCell(Board, NewCell, ColNum-RowNum, NewBoard):-
+    nth1(RowNum, Board, Row), % get row
+    replace(Row, ColNum, NewCell, NewRow), % replace cell in row
+    replace(Board, RowNum, NewRow, NewBoard). % replace row in board
+
+replace([_ | Tail], 1, Rep, [Rep | Tail]).
+replace([Head | Tail], Index, Rep, [Head | Rest]):-
+    Index > 1,
+    PrevIndex is Index - 1,
+    replace(Tail, PrevIndex, Rep, Rest).
+
+% ---- Empty Conditions ---- %
 
 isEmptyCell(empty-empty).
+
+isEmptyCellCoords(Board, ColNum-RowLet):-
+    getCell(Board, ColNum-RowLet, Cell),
+    isEmptyCell(Cell).
 
 isEmptyRowAux([]).
 isEmptyRowAux([Cell | Row]):-
