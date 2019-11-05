@@ -1,4 +1,4 @@
-:-include('board_view.pl').
+:-include('utils.pl').
 
 %---------------------------------------------------%
 %----------------- MAIN FUNCTION  ------------------%
@@ -181,13 +181,11 @@ cleanBoardAdd([Row | Board], NewBoard):-
 
 % ---- Aux Functions ---- %
 
-getCell(Board, ColNum-RowLet, Cell):-
-    letter(RowNum, RowLet), % get row number
+getCell(Board, ColNum-RowNum, Cell):-
     nth1(RowNum, Board, Row), % get row
     nth1(ColNum, Row, Cell). % get cell
 
-replaceCell(Board, NewCell, ColNum-RowLet, NewBoard):-
-    letter(RowNum, RowLet), % get row number
+replaceCell(Board, NewCell, ColNum-RowNum, NewBoard):-
     nth1(RowNum, Board, Row), % get row
     replace(Row, ColNum, NewCell, NewRow), % replace cell in row
     replace(Board, RowNum, NewRow, NewBoard). % replace row in board

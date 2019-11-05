@@ -1,29 +1,17 @@
 :-include('board_examples.pl').
+:-include('utils.pl').
 
 %---------------------------------------------------%
-%------------------ BOARD PIECES -------------------%
+%------------------- MENU STUFF --------------------%
 %---------------------------------------------------%
 
-% Pieces
-translate(king, 'k').
-translate(queen, 'q').
-translate(bishop, 'b').
-translate(tower, 't').
-translate(horse, 'h').
-translate(pawn, 'p').
-translate(empty, '.').
+printEchekHeader:-
+    write('----------------------'), nl,
+    write('--- ASCII ART HERE ---'), nl,
+    write('-------- Echek -------'), nl,
+    write('----------------------').
 
-% Color
-translate(black, 'B').
-translate(white, 'W').
-
-% numbers to letters for top row
-letter(1, a).
-letter(2, b).
-letter(3, c).
-letter(4, d).
-letter(5, e).
-letter(6, f).
+printOptions.
 
 %---------------------------------------------------%
 %------------------ BOARD DISPLAY ------------------%
