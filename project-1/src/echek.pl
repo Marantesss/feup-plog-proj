@@ -1,7 +1,7 @@
-:-include('display.pl').
-:-include('pieces.pl').
-:-include('rules.pl').
-:-include('input.pl').
+:-consult('display.pl').
+:-consult('pieces.pl').
+:-consult('rules.pl').
+:-consult('input.pl').
 
 menu:-
     printMenu,

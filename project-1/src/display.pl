@@ -1,5 +1,5 @@
 :-use_module(library(lists)).
-:-include('utils.pl').
+:-consult('utils.pl').
 
 %---------------------------------------------------%
 %------------------- MENU STUFF --------------------%
