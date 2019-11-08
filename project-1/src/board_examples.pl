@@ -1,5 +1,3 @@
-:-use_module(library(lists)).
-
 initialBoard([
     [empty-empty, empty-empty, empty-empty],
     [empty-empty, king-black, empty-empty],
