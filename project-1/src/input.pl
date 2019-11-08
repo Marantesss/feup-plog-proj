@@ -6,11 +6,13 @@
 
 readOption.
 
+validateOption.
+
 %---------------------------------------------------%
 %---------------- PLAYER MOVEMENTS -----------------%
 %---------------------------------------------------%
 
-% --- Columns and Rows --- %
+% --- Columns --- %
 
 readCol(Board, ColNum):-
     write('> Column Number: '),
@@ -24,21 +26,23 @@ validateColNum([Row | Board], ColNum):-
 
 validateColNum(Board, ColNum):-
     write('ERROR: Please enter Column number again.'), nl,
-    readRow(Board, ColNum).
+    readCol(Board, ColNum). % Reads col again when user input fails
+
+% --- Rows --- %
 
 readRow(Board, RowNum):-
     write('> Row letter: '),
     read(RowLet),
-    letter(RowNum, RowLet)
-    validateColNum(Board, RowNum).
+    validateRowNum(Board, RowLet, RowNum).
 
-validateRowNum(Board, RowNum):-
+validateRowNum(Board, RowLet, RowNum):-
+    letter(RowNum, RowLet),
     RowNum > 0,
     length(Board, ColLenght),
-    RowNum =< RowLenght.
+    RowNum =< ColLenght.
 
-validateRowNum(Board, RowNum):-
+validateRowNum(Board, RowLet, RowNum):-
     write('ERROR: Please enter Row letter again.'), nl,
-    readRow(Board, RowNum).
+    readRow(Board, RowNum). % Reads row again when user input fails
 
 
