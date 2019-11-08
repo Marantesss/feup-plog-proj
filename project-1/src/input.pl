@@ -4,9 +4,45 @@
 %------------------ MENU OPTIONS -------------------%
 %---------------------------------------------------%
 
-readOption.
+readOption:-
+    write('> Insert your option: '),
+    read(Input),
+    validateOption(Input).
 
-validateOption.
+validateOption(1) :-
+    write('Player vs Player'), nl,
+    readOption.
+    /*
+    startGame('C','C'),
+    mainMenu.
+    */
+
+validateOption(2) :-
+    write('Player vs PC'), nl,
+    readOption.
+    /*
+    startGame('C','C'),
+    mainMenu.
+    */
+
+validateOption(3) :-
+    write('PC vs PC'), nl,
+    readOption.
+    /*
+    startGame('C','C'),
+    mainMenu.
+    */
+    
+validateOption(0) :-
+    nl,
+    write('Exiting...'),
+    nl, nl.
+
+validateOption(_Other) :-
+    nl,
+    write('ERROR: that option does not exist.'),
+    nl, nl,
+    readOption.
 
 %---------------------------------------------------%
 %---------------- PLAYER MOVEMENTS -----------------%
