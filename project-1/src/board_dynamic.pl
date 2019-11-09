@@ -1,4 +1,5 @@
-:-include('utils.pl').
+:-use_module(library(lists)).
+:-consult('utils.pl').
 
 %---------------------------------------------------%
 %----------------- MAIN FUNCTION  ------------------%

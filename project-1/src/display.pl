@@ -1,17 +1,31 @@
-:-include('board_examples.pl').
-:-include('utils.pl').
+:-use_module(library(lists)).
+:-consult('utils.pl').
 
 %---------------------------------------------------%
 %------------------- MENU STUFF --------------------%
 %---------------------------------------------------%
 
-printEchekHeader:-
-    write('----------------------'), nl,
-    write('--- ASCII ART HERE ---'), nl,
-    write('-------- Echek -------'), nl,
-    write('----------------------').
-
-printOptions.
+printMenu:-
+    nl,nl,
+    write(' _________________________________________________________________ '),nl,
+    write('|                                                                 |'),nl,
+    write('|                      _____     _       _                        |'),nl,
+    write('|                     |   __|___| |_ ___| |_                      |'),nl,
+    write('|                     |   __|  _|   | -_| "_|                     |'),nl,
+    write('|                     |_____|___|_|_|___|_,_|                     |'),nl,
+    write('|                                                                 |'),nl,
+    write('|                                                                 |'),nl,
+    write('|                                                                 |'),nl,
+    write('|                       1. Player vs Player                       |'),nl,
+    write('|                                                                 |'),nl,
+    write('|                       2. Player vs Computer                     |'),nl,
+    write('|                                                                 |'),nl,
+	write('|                       3. Computer vs Computer                   |'),nl,
+    write('|                                                                 |'),nl,
+    write('|                       0. Exit                                   |'),nl,
+    write('|                                                                 |'),nl,
+    write('|_________________________________________________________________|'),nl,
+    nl,nl.
 
 %---------------------------------------------------%
 %------------------ BOARD DISPLAY ------------------%

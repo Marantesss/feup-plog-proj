@@ -11,7 +11,7 @@ translate(empty, '.').
 translate(black, 'B').
 translate(white, 'W').
 
-% numbers to letters for top row
+% numbers to letters
 letter(1, a).
 letter(2, b).
 letter(3, c).

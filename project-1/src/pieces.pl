@@ -1,4 +1,4 @@
-:-include('board_dynamic.pl').
+:-consult('board_dynamic.pl').
 
 %---------------------------------------------------%
 %----------------- Piece Placement -----------------%
