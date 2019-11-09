@@ -201,8 +201,8 @@ replace([Head | Tail], Index, Rep, [Head | Rest]):-
 
 isEmptyCell(empty-empty).
 
-isEmptyCellCoords(Board, ColNum-RowLet):-
-    getCell(Board, ColNum-RowLet, Cell),
+isEmptyCellCoords(Board, ColNum-RowNum):-
+    getCell(Board, ColNum-RowNum, Cell),
     isEmptyCell(Cell).
 
 isEmptyRowAux([]).
