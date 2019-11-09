@@ -182,6 +182,24 @@ cleanBoardAdd([Row | Board], NewBoard):-
 
 % ---- Aux Functions ---- %
 
+% ---- gets cell coordinates when cell is known.
+
+getCellRow([Row | _], ReturnRow, Cell, N):-
+    member(Cell, Row),
+    ReturnRow = Row.
+
+getCellRow([Row | Board], ReturnRow, Cell, N):-
+    Num is N + 1,
+    getCellRow(Board, ReturnRow, Cell, Num).
+
+
+getCellCoords(Board, ColNum-RowNum, Cell):-
+    getCellRow(Board, Row, Cell, 1),
+    nth1(RowNum, Board, Row), % get row number
+    nth1(ColNum, Row, Cell). % get column number
+
+% ---- gets cell when cell coordinates is known.
+
 getCell(Board, ColNum-RowNum, Cell):-
     nth1(RowNum, Board, Row), % get row
     nth1(ColNum, Row, Cell). % get cell

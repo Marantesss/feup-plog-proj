@@ -4,6 +4,13 @@
 %------------------ Piece's Rules ------------------%
 %---------------------------------------------------%
 
+getPossibleMoves(Board, king, ColNum-RowNum, PossibleMoves).
+getPossibleMoves(Board, queen, ColNum-RowNum, PossibleMoves).
+getPossibleMoves(Board, bishop, ColNum-RowNum, PossibleMoves).
+getPossibleMoves(Board, tower, ColNum-RowNum, PossibleMoves).
+getPossibleMoves(Board, horse, ColNum-RowNum, PossibleMoves).
+getPossibleMoves(Board, pawn, ColNum-RowNum, PossibleMoves).
+
 % ---- Aux Functions ---- %
 
 % inside board
@@ -51,8 +58,5 @@ canPlace(Board, ColNum-RowNum):-
     isEmptyCellCoords(Board, ColNum-RowNum). % check if coord is empty
     \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent pieces
 
-% movement rules
-
 %se for rainha ou rei, verificar se tem jogadas possiveis
 %se nao: sendo rainha, eh consumida. sendo rei, game over
-canMove.
