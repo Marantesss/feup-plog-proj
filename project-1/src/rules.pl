@@ -4,6 +4,10 @@
 %------------------ Piece's Rules ------------------%
 %---------------------------------------------------%
 
+getPossibleMoves(Board, Piece-Color, PossibleMoves):-
+    getCellCoords(Board, ColNum-RowNum, Piece-Color),
+    getPossibleMoves(Board, Piece, ColNum-RowNum, PossibleMoves).
+
 getPossibleMoves(Board, king, ColNum-RowNum, PossibleMoves).
 getPossibleMoves(Board, queen, ColNum-RowNum, PossibleMoves).
 getPossibleMoves(Board, bishop, ColNum-RowNum, PossibleMoves).
