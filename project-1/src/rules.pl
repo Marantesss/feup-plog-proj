@@ -8,11 +8,27 @@ getPossibleMoves(Board, Piece-Color, PossibleMoves):-
     getCellCoords(Board, ColNum-RowNum, Piece-Color),
     getPossibleMoves(Board, Piece, ColNum-RowNum, PossibleMoves).
 
-getPossibleMoves(Board, king, ColNum-RowNum, PossibleMoves).
+% ---- Piece not yet placed in the board ---- %
+getPossibleMoves(Board, Piece, 0-0, PossibleMoves):-
+    write('Piece not in board'), nl.
+
+% ---- King's possible moves ---- %
+getPossibleMoves(Board, king, ColNum-RowNum, PossibleMoves):-
+    write('this is king'), nl.
+
+% ---- Queen's possible moves ---- %
 getPossibleMoves(Board, queen, ColNum-RowNum, PossibleMoves).
+
+% ---- Bishop's possible moves ---- %
 getPossibleMoves(Board, bishop, ColNum-RowNum, PossibleMoves).
+
+% ---- Tower's possible moves ---- %
 getPossibleMoves(Board, tower, ColNum-RowNum, PossibleMoves).
+
+% ---- Horse's possible moves ---- %
 getPossibleMoves(Board, horse, ColNum-RowNum, PossibleMoves).
+
+% ---- Pawn's possible moves ---- %
 getPossibleMoves(Board, pawn, ColNum-RowNum, PossibleMoves).
 
 % ---- Aux Functions ---- %
@@ -128,7 +144,7 @@ notAdjacent([Row | Board], ColNum-RowNum):-
 
 canPlace(Board, ColNum-RowNum):-
     isEmptyCellCoords(Board, ColNum-RowNum), % check if coord is empty
-    \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent pieces
+    \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent SAME COLOR pieces
 
 %se for rainha ou rei, verificar se tem jogadas possiveis
 %se nao: sendo rainha, eh consumida. sendo rei, game over

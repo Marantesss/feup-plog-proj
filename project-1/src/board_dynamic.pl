@@ -96,6 +96,10 @@ checkRight(Board, Board).
 
 % ---- gets cell coordinates when cell is known.
 
+% ---- piece is not on the board
+getCellRow([], ReturnRow, Cell):-
+    ReturnRow = [].
+% ---- piece is in board
 getCellRow([Row | _], ReturnRow, Cell):-
     member(Cell, Row),
     ReturnRow = Row.
@@ -103,11 +107,12 @@ getCellRow([Row | _], ReturnRow, Cell):-
 getCellRow([Row | Board], ReturnRow, Cell):-
     getCellRow(Board, ReturnRow, Cell).
 
-
 getCellCoords(Board, ColNum-RowNum, Cell):-
     getCellRow(Board, Row, Cell),
     nth1(RowNum, Board, Row), % get row number
     nth1(ColNum, Row, Cell). % get column number
+% ---- piece is not on the board
+getCellCoords(Board, 0-0, Cell).
 
 % ---- gets cell when cell coordinates is known.
 
