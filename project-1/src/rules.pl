@@ -142,9 +142,34 @@ notAdjacent([Row | Board], ColNum-RowNum):-
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNum),        % left
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumUpper).   % upper-left
 
+
 canPlace(Board, ColNum-RowNum):-
     isEmptyCellCoords(Board, ColNum-RowNum), % check if coord is empty
     \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent SAME COLOR pieces
+
+% DOES NOT WORK FOR ALL CASES
+% all the pieces are touching one another if the board has no empty rols or cols besides the boarders
+isValidBoard([Row | Board]):-
+    % test if rows are empty
+    length([Row | Board], RowNum), ActualRowNum is RowNum - 1,
+    isValidBoardRows([Row | Board], ActualRowNum),
+    % test if cols are empty
+    length(Row, ColNum), ActualColNum is ColNum - 1,
+    isValidBoardCols([Row | Board], ActualColNum),
+    % check board size
+    RowNum < 7, ColNum < 7.
+
+isValidBoardCols(_, 1).
+isValidBoardCols(Board, ColNum):-
+    \+isEmptyColumn(Board, ColNum),
+    NextColNum is ColNum - 1,
+    isValidBoardCols(Board, NextColNum).
+
+isValidBoardRows(_, 1).
+isValidBoardRows(Board, RowNum):-
+    \+isEmptyRow(Board, RowNum),
+    NextRowNum is RowNum - 1,
+    isValidBoardRows(Board, NextRowNum).
 
 %se for rainha ou rei, verificar se tem jogadas possiveis
 %se nao: sendo rainha, eh consumida. sendo rei, game over

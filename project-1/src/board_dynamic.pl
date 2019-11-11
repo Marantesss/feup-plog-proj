@@ -162,6 +162,7 @@ getNewRow(3, [empty-empty, empty-empty, empty-empty]).
 getNewRow(4, [empty-empty, empty-empty, empty-empty, empty-empty]).
 getNewRow(5, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
 getNewRow(6, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
+getNewRow(7, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
 
 addTopRow([Row | Board], NewBoard):-
     length(Row, RowLength),
