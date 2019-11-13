@@ -18,12 +18,19 @@ getPossiblePawnMoves(Board, ColNum-RowNum, Color, PossibleMoves):-
 % place piece in its possible new places
 % rearrange board
 % check if board is valid    
-canMove(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Piece-Color):-
+canMove(Board, NewColNum-NewRowNum, Piece-Color):-
+    % check if NewColNum-NewRowNum are inside the board
+    % checks if NewCoords are achievable from OldCoords
+    getCellCoords(ArrangedBoard, OldColNum-OldRowNum, Piece-Color),
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
-    replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard),
-    replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard),
-    rearrangeBoard(NewBoard, ArrangedBoard),
+    replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
+    replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
+    rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
     getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
-    printBoard(ArrangedBoard),
+    !,
     \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
+    !,
     isValidBoard(ArrangedBoard).
+
+
+
