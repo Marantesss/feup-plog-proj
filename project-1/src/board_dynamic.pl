@@ -94,6 +94,28 @@ checkRight(Board, Board).
 %----------------- Aux Predicados ------------------%
 %---------------------------------------------------%
 
+% ---- gets cell coordinates when cell is known.
+
+% ---- piece is not on the board
+getCellRow([], ReturnRow, Cell):-
+    ReturnRow = [].
+% ---- piece is in board
+getCellRow([Row | _], ReturnRow, Cell):-
+    member(Cell, Row),
+    ReturnRow = Row.
+
+getCellRow([Row | Board], ReturnRow, Cell):-
+    getCellRow(Board, ReturnRow, Cell).
+
+getCellCoords(Board, ColNum-RowNum, Cell):-
+    getCellRow(Board, Row, Cell),
+    nth1(RowNum, Board, Row), % get row number
+    nth1(ColNum, Row, Cell). % get column number
+% ---- piece is not on the board
+getCellCoords(Board, 0-0, Cell).
+
+% ---- gets cell when cell coordinates is known.
+
 getCell(Board, ColNum-RowNum, Cell):-
     nth1(RowNum, Board, Row), % get row
     nth1(ColNum, Row, Cell). % get cell
@@ -113,8 +135,8 @@ replace([Head | Tail], Index, Rep, [Head | Rest]):-
 
 isEmptyCell(empty-empty).
 
-isEmptyCellCoords(Board, ColNum-RowLet):-
-    getCell(Board, ColNum-RowLet, Cell),
+isEmptyCellCoords(Board, ColNum-RowNum):-
+    getCell(Board, ColNum-RowNum, Cell),
     isEmptyCell(Cell).
 
 isEmptyRowAux([]).
@@ -140,6 +162,7 @@ getNewRow(3, [empty-empty, empty-empty, empty-empty]).
 getNewRow(4, [empty-empty, empty-empty, empty-empty, empty-empty]).
 getNewRow(5, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
 getNewRow(6, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
+getNewRow(7, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
 
 addTopRow([Row | Board], NewBoard):-
     length(Row, RowLength),
