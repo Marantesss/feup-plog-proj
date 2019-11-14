@@ -142,8 +142,37 @@ enemiesInPath(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getDeltaY(OldRowNum, NewRowNum, DeltaY),
     \+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, NewColNum-NewRowNum):-
-    getCell(Board, CurrentX-CurrentY, CellPiece-CellColor),
-    CellColor =/= Color.
 
-noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, NewColNum-NewRowNum).
+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-FinalRowNum):-
+    CurrentX == FinalColNum,
+    CurrentY == FinalRowNum,
+    !,
+    fail.
+
+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-FinalRowNum):-
+    getCell(Board, CurrentX-CurrentY, CellPiece-CellColor),
+    Color \== CellColor,
+    CellColor \== empty.
+
+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-FinalRowNum):-
+    NextX is CurrentX + DeltaX,
+    NextY is CurrentY + DeltaY,
+    noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, NextX-NextY, FinalColNum-FinalRowNum).
+
+test:-
+    trace,
+    noEnemiesInPathAux([
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
+            [empty-empty, tower-black, king-black, tower-white, empty-empty],
+            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
+            [empty-empty, queen-white, horse-black, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
+        ],
+        white,
+        1-0,
+        2-5, %queen-white
+        4-5
+    ),
+    notrace.
+    
