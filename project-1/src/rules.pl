@@ -9,10 +9,10 @@ canPlace(Board, ColNum-RowNum):-
     \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent SAME COLOR pieces
 
 canMove(Board, NewColNum-NewRowNum, Piece-Color):-
-    % check if NewColNum-NewRowNum are inside the board
-    getCellCoords(ArrangedBoard, OldColNum-OldRowNum, Piece-Color),
+    isInsideBoard(Board, NewColNum-NewRowNum), % check if NewColNum-NewRowNum are inside the board
+    getCellCoords(Board, OldColNum-OldRowNum, Piece-Color),
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
-    % canPieceMove(Board, Piece, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
+    canPieceMove(Board, Piece, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
     replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
     replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
@@ -34,7 +34,9 @@ canPieceMove(Board, bishop, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 canPieceMove(Board, tower, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
+% horse can move in L's
 canPieceMove(Board, horse, OldColNum-OldRowNum, NewColNum-NewRowNum).
+
 
 % pawn can move up, down, left or right
 canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum):-
@@ -48,7 +50,7 @@ canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum):-
         % left
         (NewColNum =:= ColNumLeft, OldRowNum =:= NewRowNum);
         % right
-        (NewColNum =:= ColNumRight, OldRowNum =:= NewRowNum);
+        (NewColNum =:= ColNumRight, OldRowNum =:= NewRowNum)
     ).
 
 % ---- Aux Functions ---- %
@@ -67,6 +69,11 @@ notAdjacent([Row | Board], ColNum-RowNum):-
     isEmptyCellCoords([Row | Board], ColNumRight-RowNumUpper),  % upper-right
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumLower),   % lower-left
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumUpper).   % upper-left
+
+isInsideBoard([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | Board], NumRows),
+    ColNum >= 1, RowNum >= 1,
+    ColNum =< NumCols, RowNum =< NumRows.
 
 % DOES NOT WORK FOR ALL CASES
 % all the pieces are touching one another if the board has no empty rols or cols besides the boarders
