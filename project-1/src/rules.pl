@@ -75,8 +75,10 @@ canPieceMove(Board, tower-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
 
 notAdjacent([Row | Board], ColNum-RowNum):-
     length(Row, NumCols), length([Row | Board], NumRows),
-    ColNum > 1, RowNum > 1,
-    ColNum < NumCols, RowNum < NumRows,
+    TestedNumRows is NumRows + 1,
+    TestedNumCols is NumCols + 1,
+    between(2, TestedNumRows, RowNum),
+    between(2, TestedNumCols, ColNum),
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
     isEmptyCellCoords([Row | Board], ColNum-RowNumUpper),       % upper
@@ -90,8 +92,8 @@ notAdjacent([Row | Board], ColNum-RowNum):-
 
 isInsideBoard([Row | Board], ColNum-RowNum):-
     length(Row, NumCols), length([Row | Board], NumRows),
-    ColNum >= 1, RowNum >= 1,
-    ColNum =< NumCols, RowNum =< NumRows.
+    between(1, NumRows, RowNum),
+    between(1, NumCols, ColNum).
 
 % DOES NOT WORK FOR ALL CASES
 % all the pieces are touching one another if the board has no empty rols or cols besides the boarders
