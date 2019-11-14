@@ -10,9 +10,9 @@ canPlace(Board, ColNum-RowNum):-
 
 canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     % check if NewColNum-NewRowNum are inside the board
-    % checks if NewCoords are achievable from OldCoords
     getCellCoords(ArrangedBoard, OldColNum-OldRowNum, Piece-Color),
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
+    % canPieceMove(Board, Piece, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
     replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
     replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
@@ -36,7 +36,20 @@ canPieceMove(Board, tower, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 canPieceMove(Board, horse, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum).
+% pawn can move up, down, left or right
+canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    RowNumUpper is OldRowNum - 1,  RowNumLower is OldRowNum + 1,
+    ColNumLeft is OldColNum - 1,  ColNumRight is OldColNum + 1,
+    (
+        % up
+        (OldColNum =:= NewColNum, RowNumUpper =:= NewRowNum);
+        % down
+        (OldColNum =:= NewColNum, RowNumLower =:= NewRowNum);
+        % left
+        (NewColNum =:= ColNumLeft, OldRowNum =:= NewRowNum);
+        % right
+        (NewColNum =:= ColNumRight, OldRowNum =:= NewRowNum);
+    ).
 
 % ---- Aux Functions ---- %
 
