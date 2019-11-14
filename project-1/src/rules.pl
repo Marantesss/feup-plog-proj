@@ -13,6 +13,7 @@ canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     getCellCoords(Board, OldColNum-OldRowNum, Piece-Color),
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
     canPieceMove(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
+    % detect if there are enemies in path
     replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
     replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
@@ -119,3 +120,30 @@ isValidBoardRows(Board, RowNum):-
     NextRowNum is RowNum - 1,
     isValidBoardRows(Board, NextRowNum).
 
+getDeltaX(OldX, NewX, 0):-
+    NewX - OldX =:= 0.
+getDeltaX(OldX, NewX, 1):-
+    NewX - OldX > 0.
+getDeltaX(OldX, NewX, -1):-
+    NewX - OldX < 0.
+
+getDeltaY(OldY, NewY\, 0):-
+    NewX - OldX =:= 0.
+getDeltaY(OldY, NewY, 1):-
+    NewX - OldX < 0.
+getDeltaY(OldY, NewY, -1):-
+    NewX - OldX > 0.
+
+% horse can go through all pieces
+enemiesInPath(Board, horse-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
+
+enemiesInPath(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDeltaX(OldColNum, NewColNum, DeltaX),
+    getDeltaY(OldRowNum, NewRowNum, DeltaY),
+    \+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, OldColNum-OldRowNum, NewColNum-NewRowNum).
+
+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, NewColNum-NewRowNum):-
+    getCell(Board, CurrentX-CurrentY, CellPiece-CellColor),
+    CellColor =/= Color.
+
+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, NewColNum-NewRowNum).
