@@ -20,7 +20,7 @@ canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     !,
     \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
     !,
-    isValidBoard(ArrangedBoard).
+    isValidBoard(ArrangedBoard). % check if final board is empty
 
 %---------------------------------------------------%
 %------------------ Piece's Rules ------------------%
