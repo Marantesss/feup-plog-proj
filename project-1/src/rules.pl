@@ -1,5 +1,4 @@
 :- consult('board_dynamic.pl').
-:- consult('display.pl').
 
 %---------------------------------------------------%
 %----------------- Main 'functions' ----------------%
@@ -13,13 +12,10 @@ canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     isInsideBoard(Board, NewColNum-NewRowNum), % check if NewColNum-NewRowNum are inside the board
     getCellCoords(Board, OldColNum-OldRowNum, Piece-Color),
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
-    printBoard(Board),
     canPieceMove(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
     replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
     replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
-    printBoard(NewBoard),
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
-    printBoard(ArrangedBoard),
     getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
     !,
     \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces

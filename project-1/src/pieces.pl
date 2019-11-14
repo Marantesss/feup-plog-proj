@@ -1,4 +1,5 @@
 :-consult('rules.pl').
+:-consult(library(between)).
 
 /*
 %---------------------------------------------------%
@@ -20,29 +21,33 @@ movePiece(Board, Piece-Color, ColNum-RowNum, NewBoard):-
     rearrangeBoard(RepBoard, NewBoard). % rearrange board
 */
 
+getPossiblePlaces(Board, Piece-Color, PossiblePlaces):-
+    Goal =
+    (        
+        between(1, 6, ColNum),
+        between(1, 6, RowNum),
+        canPlace(Board, ColNum-RowNum, Piece-Color)
+    ),
+    setof(ColNum-RowNum, Goal, PossibleMoves).
+
 getPossibleMoves(Board, Piece-Color, PossibleMoves):-
-    getCellCoords(Board, ColNum-RowNum, Piece-Color),
-    getPossibleMoves(Board, Piece-Color, ColNum-RowNum, PossibleMoves).
+    Goal =
+    (        
+        between(1, 6, ColNum),
+        between(1, 6, RowNum),
+        canMove(Board, ColNum-RowNum, Piece-Color)
+    ),
+    setof(ColNum-RowNum, Goal, PossibleMoves).
 
-% ---- Piece not yet placed in the board ---- %
-getPossibleMoves(Board, Piece-Color, 0-0, PossibleMoves):-
-    write('Piece not in board'), nl.
 
-% ---- King's possible moves ---- %
-getPossibleMoves(Board, king-Color, ColNum-RowNum, PossibleMoves):-
-    write('this is king'), nl.
-
-% ---- Queen's possible moves ---- %
-getPossibleMoves(Board, queen-Color, ColNum-RowNum, PossibleMoves).
-
-% ---- Bishop's possible moves ---- %
-getPossibleMoves(Board, bishop-Color, ColNum-RowNum, PossibleMoves).
-
-% ---- Tower's possible moves ---- %
-getPossibleMoves(Board, tower-Color, ColNum-RowNum, PossibleMoves).
-
-% ---- Horse's possible moves ---- %
-getPossibleMoves(Board, horse-Color, ColNum-RowNum, PossibleMoves).
-
-% ---- Pawn's possible moves ---- %
-getPossibleMoves(Board, pawn-Color, ColNum-RowNum, PossibleMoves).
+test:-
+    getPossibleMoves([
+        [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
+        [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
+        [empty-empty, tower-black, king-black, tower-white, empty-empty],
+        [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
+        [empty-empty, queen-white, horse-black, empty-empty, empty-empty],
+        [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
+        ], tower-black, PM),
+    write(PM).
+    
