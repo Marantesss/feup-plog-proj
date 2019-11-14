@@ -114,7 +114,7 @@ getCellCoords(Board, ColNum-RowNum, Cell):-
 % ---- piece is not on the board
 getCellCoords(Board, 0-0, Cell).
 
-% ---- gets cell when cell coordinates is known.
+% ---- gets cell when cell coordinates are known.
 
 getCell(Board, ColNum-RowNum, Cell):-
     nth1(RowNum, Board, Row), % get row
