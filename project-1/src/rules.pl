@@ -1,4 +1,5 @@
 :- consult('board_dynamic.pl').
+:- consult('display.pl').
 
 %---------------------------------------------------%
 %----------------- Main 'functions' ----------------%
@@ -12,10 +13,13 @@ canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     isInsideBoard(Board, NewColNum-NewRowNum), % check if NewColNum-NewRowNum are inside the board
     getCellCoords(Board, OldColNum-OldRowNum, Piece-Color),
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
-    canPieceMove(Board, Piece, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
+    printBoard(Board),
+    canPieceMove(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
     replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
     replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
+    printBoard(NewBoard),
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
+    printBoard(ArrangedBoard),
     getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
     !,
     \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
@@ -26,32 +30,50 @@ canMove(Board, NewColNum-NewRowNum, Piece-Color):-
 %------------------ Piece's Rules ------------------%
 %---------------------------------------------------%
 
-canPieceMove(Board, king, OldColNum-OldRowNum, NewColNum-NewRowNum).
-
-canPieceMove(Board, queen, OldColNum-OldRowNum, NewColNum-NewRowNum).
-
-canPieceMove(Board, bishop, OldColNum-OldRowNum, NewColNum-NewRowNum).
-
-canPieceMove(Board, tower, OldColNum-OldRowNum, NewColNum-NewRowNum).
+% king can move just like pawn + move in diagonals
+validKingTranslation(1, 0).
+validKingTranslation(1, 1).
+canPieceMove(Board, king-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    DistX is abs(OldColNum - NewColNum),
+    DistY is abs(OldRowNum - NewRowNum),
+    (validKingTranslation(DistX, DistY); validKingTranslation(DistX, DistY)).
 
 % horse can move in L's
-canPieceMove(Board, horse, OldColNum-OldRowNum, NewColNum-NewRowNum).
-
+validHorseTranslation(2, 1).
+canPieceMove(Board, horse-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    DistX is abs(OldColNum - NewColNum),
+    DistY is abs(OldRowNum - NewRowNum),
+    (validHorseTranslation(DistX, DistY); validHorseTranslation(DistX, DistY)).
 
 % pawn can move up, down, left or right
-canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    RowNumUpper is OldRowNum - 1,  RowNumLower is OldRowNum + 1,
-    ColNumLeft is OldColNum - 1,  ColNumRight is OldColNum + 1,
+validPawnTranslation(1, 0).
+canPieceMove(Board, pawn-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    DistX is abs(OldColNum - NewColNum),
+    DistY is abs(OldRowNum - NewRowNum),
+    (validPawnTranslation(DistX, DistY); validPawnTranslation(DistX, DistY)).
+
+% queen can move like bishop + tower
+canPieceMove(Board, queen-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    DistX is abs(OldColNum - NewColNum),
+    DistY is abs(OldRowNum - NewRowNum),
     (
-        % up
-        (OldColNum =:= NewColNum, RowNumUpper =:= NewRowNum);
-        % down
-        (OldColNum =:= NewColNum, RowNumLower =:= NewRowNum);
-        % left
-        (NewColNum =:= ColNumLeft, OldRowNum =:= NewRowNum);
-        % right
-        (NewColNum =:= ColNumRight, OldRowNum =:= NewRowNum)
+        validTowerTranslation(DistX, DistY); validTowerTranslation(DistX, DistY); % tower-like translation
+        validBishopTranslation(DistX, DistY); validBishopTranslation(DistX, DistY)  % bishop-like translation
     ).
+
+% bishop can diagonaly an arbitrary number of cells
+validBishopTranslation(X, X).
+canPieceMove(Board, bishop-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    DistX is abs(OldColNum - NewColNum),
+    DistY is abs(OldRowNum - NewRowNum),
+    (validBishopTranslation(DistX, DistY); validBishopTranslation(DistX, DistY)).
+
+% tower can move up, down, left or right an arbitrary number of cells
+validTowerTranslation(0, X).
+canPieceMove(Board, tower-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    DistX is abs(OldColNum - NewColNum),
+    DistY is abs(OldRowNum - NewRowNum),
+    (validTowerTranslation(DistX, DistY); validTowerTranslation(DistX, DistY)).
 
 % ---- Aux Functions ---- %
 
