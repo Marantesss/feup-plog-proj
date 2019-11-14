@@ -1,41 +1,45 @@
 :- consult('board_dynamic.pl').
 
 %---------------------------------------------------%
+%----------------- Main 'functions' ----------------%
+%---------------------------------------------------%
+
+canPlace(Board, ColNum-RowNum):-
+    isEmptyCellCoords(Board, ColNum-RowNum), % check if coord is empty
+    \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent SAME COLOR pieces
+
+canMove(Board, NewColNum-NewRowNum, Piece-Color):-
+    % check if NewColNum-NewRowNum are inside the board
+    % checks if NewCoords are achievable from OldCoords
+    getCellCoords(ArrangedBoard, OldColNum-OldRowNum, Piece-Color),
+    isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
+    replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
+    replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
+    rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
+    getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
+    !,
+    \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
+    !,
+    isValidBoard(ArrangedBoard).
+
+%---------------------------------------------------%
 %------------------ Piece's Rules ------------------%
 %---------------------------------------------------%
 
-getPossibleMoves(Board, Piece-Color, PossibleMoves):-
-    getCellCoords(Board, ColNum-RowNum, Piece-Color),
-    getPossibleMoves(Board, Piece, ColNum-RowNum, PossibleMoves).
+canPieceMove(Board, king, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-% ---- Piece not yet placed in the board ---- %
-getPossibleMoves(Board, Piece, 0-0, PossibleMoves):-
-    write('Piece not in board'), nl.
+canPieceMove(Board, queen, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-% ---- King's possible moves ---- %
-getPossibleMoves(Board, king, ColNum-RowNum, PossibleMoves):-
-    write('this is king'), nl.
+canPieceMove(Board, bishop, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-% ---- Queen's possible moves ---- %
-getPossibleMoves(Board, queen, ColNum-RowNum, PossibleMoves).
+canPieceMove(Board, tower, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-% ---- Bishop's possible moves ---- %
-getPossibleMoves(Board, bishop, ColNum-RowNum, PossibleMoves).
+canPieceMove(Board, horse, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-% ---- Tower's possible moves ---- %
-getPossibleMoves(Board, tower, ColNum-RowNum, PossibleMoves).
-
-% ---- Horse's possible moves ---- %
-getPossibleMoves(Board, horse, ColNum-RowNum, PossibleMoves).
-
-% ---- Pawn's possible moves ---- %
-getPossibleMoves(Board, pawn, ColNum-RowNum, PossibleMoves).
+canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 % ---- Aux Functions ---- %
 
-% The following rules are abouth moving, not placing
-
-% inside board
 notAdjacent([Row | Board], ColNum-RowNum):-
     length(Row, NumCols), length([Row | Board], NumRows),
     ColNum > 1, RowNum > 1,
@@ -50,10 +54,6 @@ notAdjacent([Row | Board], ColNum-RowNum):-
     isEmptyCellCoords([Row | Board], ColNumRight-RowNumUpper),  % upper-right
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumLower),   % lower-left
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumUpper).   % upper-left
-
-canPlace(Board, ColNum-RowNum):-
-    isEmptyCellCoords(Board, ColNum-RowNum), % check if coord is empty
-    \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent SAME COLOR pieces
 
 % DOES NOT WORK FOR ALL CASES
 % all the pieces are touching one another if the board has no empty rols or cols besides the boarders
@@ -79,5 +79,3 @@ isValidBoardRows(Board, RowNum):-
     NextRowNum is RowNum - 1,
     isValidBoardRows(Board, NextRowNum).
 
-%se for rainha ou rei, verificar se tem jogadas possiveis
-%se nao: sendo rainha, eh consumida. sendo rei, game over
