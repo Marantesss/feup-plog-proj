@@ -4,9 +4,16 @@
 %----------------- Main 'functions' ----------------%
 %---------------------------------------------------%
 
-canPlace(Board, ColNum-RowNum):-
+canPlace(Board, ColNum-RowNum, Piece-Color):-
+    isInsideBoard(Board, ColNum-RowNum), % check if ColNum-RowNum are inside the board
     isEmptyCellCoords(Board, ColNum-RowNum), % check if coord is empty
-    \+notAdjacent(Board, ColNum-RowNum). % check if coord has any adjacent SAME COLOR pieces
+    replaceCell(Board, Piece-Color, ColNum-RowNum, NewBoard), % put piece in cell
+    rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
+    getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
+    \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
+    notAdjacentOpposingKing(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Color),   % check if coord is adjacent to the Opposing king
+    \+notAdjacentSameColorPiece(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Color), % check if coord has any adjacent SAME COLOR pieces
+    isValidBoard(ArrangedBoard).
 
 canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     isInsideBoard(Board, NewColNum-NewRowNum), % check if NewColNum-NewRowNum are inside the board
@@ -90,13 +97,41 @@ notAdjacent([Row | Board], ColNum-RowNum):-
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumLower),   % lower-left
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumUpper).   % upper-left
 
+notAdjacentOpposingKing([Row | Board], ColNum-RowNum, Color):-
+    length(Row, NumCols), length([Row | Board], NumRows),
+    ColNum > 1, RowNum > 1,
+    ColNum < NumCols, RowNum < NumRows,
+    RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
+    ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
+
+    \+isOpposingKingCellCoords([Row | Board], ColNum-RowNumUpper, Color),       % upper
+    \+isOpposingKingCellCoords([Row | Board], ColNumRight-RowNum, Color),       % right
+    \+isOpposingKingCellCoords([Row | Board], ColNum-RowNumLower, Color),       % lower
+    \+isOpposingKingCellCoords([Row | Board], ColNumLeft-RowNum, Color).       % left
+
+notAdjacentSameColorPiece([Row | Board], ColNum-RowNum, Color):-
+    length(Row, NumCols), length([Row | Board], NumRows),
+    ColNum > 1, RowNum > 1,
+    ColNum < NumCols, RowNum < NumRows,
+    RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
+    ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
+    
+    notSameColorPieceCellCoords([Row | Board], ColNum-RowNumUpper, Color),    % upper
+    notSameColorPieceCellCoords([Row | Board], ColNum-RowNumLower, Color),    % lower
+    notSameColorPieceCellCoords([Row | Board], ColNumRight-RowNum, Color),    % right
+    notSameColorPieceCellCoords([Row | Board], ColNumLeft-RowNum, Color),    % left
+    notSameColorPieceCellCoords([Row | Board], ColNumRight-RowNumUpper, Color),    % upper-right
+    notSameColorPieceCellCoords([Row | Board], ColNumLeft-RowNumUpper, Color),    % upper-left
+    notSameColorPieceCellCoords([Row | Board], ColNumLeft-RowNumLower, Color),    % lower-left
+    notSameColorPieceCellCoords([Row | Board], ColNumRight-RowNumLower, Color).    % lower-right
+
 isInsideBoard([Row | Board], ColNum-RowNum):-
     length(Row, NumCols), length([Row | Board], NumRows),
     between(1, NumRows, RowNum),
     between(1, NumCols, ColNum).
 
 % DOES NOT WORK FOR ALL CASES
-% all the pieces are touching one another if the board has no empty rols or cols besides the boarders
+% all the pieces are touching one another if the board has no empty rows or cols besides the borders
 isValidBoard([Row | Board]):-
     % test if rows are empty
     length([Row | Board], RowNum), ActualRowNum is RowNum - 1,
@@ -119,3 +154,15 @@ isValidBoardRows(Board, RowNum):-
     NextRowNum is RowNum - 1,
     isValidBoardRows(Board, NextRowNum).
 
+% ---- King and opposing colors Conditions ---- %
+
+isKingCell(king-_).
+isOpposingKingCellCoords(Board, ColNum-RowNum, PlayingColor):-
+    getCell(Board, ColNum-RowNum, Piece-Color),
+    getOpposingColor(PlayingColor, OpposingColor),
+    isKingCell(Piece-Color),
+    OpposingColor == Color.
+
+notSameColorPieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
+    getCell(Board, ColNum-RowNum, Piece-Color),
+    PlayingColor \== Color.

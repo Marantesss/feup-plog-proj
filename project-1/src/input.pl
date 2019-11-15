@@ -80,5 +80,4 @@ validateRowNum(Board, RowLet, RowNum):-
 validateRowNum(Board, RowLet, RowNum):-
     write('ERROR: Please enter Row letter again.'), nl,
     readRow(Board, RowNum). % Reads row again when user input fails
-
-
+    
