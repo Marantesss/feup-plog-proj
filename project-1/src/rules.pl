@@ -121,18 +121,18 @@ isValidBoardRows(Board, RowNum):-
     isValidBoardRows(Board, NextRowNum).
 
 getDeltaX(OldX, NewX, 0):-
-    NewX - OldX =:= 0.
+    NewX =:= OldX.
 getDeltaX(OldX, NewX, 1):-
-    NewX - OldX > 0.
+    NewX > OldX.
 getDeltaX(OldX, NewX, -1):-
-    NewX - OldX < 0.
+    NewX < OldX.
 
-getDeltaY(OldY, NewY\, 0):-
-    NewX - OldX =:= 0.
+getDeltaY(OldY, NewY, 0):-
+    NewX =:= OldX.
 getDeltaY(OldY, NewY, 1):-
-    NewX - OldX < 0.
+    NewX < OldX.
 getDeltaY(OldY, NewY, -1):-
-    NewX - OldX > 0.
+    NewX > OldX.
 
 % horse can go through all pieces
 enemiesInPath(Board, horse-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
@@ -142,7 +142,32 @@ enemiesInPath(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getDeltaY(OldRowNum, NewRowNum, DeltaY),
     \+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
+% check down
+enemiesInPathAux(Board, Color, 0-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getCol(Board, OldColNum, Row),
+    splitList(Row, Path, OldRowNum, NewRowNum),
+    member(_-black, Path).
 
+% check up
+enemiesInPathAux(Board, Color, 0-(-1), OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getCol(Board, OldColNum, Row),
+    splitList(Row, Path, NewRowNum, OldRowNum),
+    member(_-black, Path).
+
+% check right
+enemiesInPathAux(Board, Color, 1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getRow(Board, OldRowNum, Row),
+    splitList(Row, Path, OldColNum, NewColNum),
+    member(_-black, Path).
+
+% check left
+enemiesInPathAux(Board, Color, -1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getRow(Board, OldRowNum, Row),
+    splitList(Row, Path, NewColNum, OldColNum),
+    member(_-black, Path).
+    
+
+/*
 noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-FinalRowNum):-
     CurrentX == FinalColNum,
     CurrentY == FinalRowNum,
@@ -158,10 +183,12 @@ noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-Fi
     NextX is CurrentX + DeltaX,
     NextY is CurrentY + DeltaY,
     noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, NextX-NextY, FinalColNum-FinalRowNum).
+*/
 
 test:-
     trace,
-    noEnemiesInPathAux([
+    noEnemiesInPathAux(
+        [
             [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
             [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
             [empty-empty, tower-black, king-black, tower-white, empty-empty],
@@ -170,9 +197,9 @@ test:-
             [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
         ],
         white,
-        1-0,
+        0-(-1),
         2-5, %queen-white
-        4-5
+        2-2
     ),
     notrace.
     
