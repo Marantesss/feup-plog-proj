@@ -5,13 +5,14 @@
 %---------------------------------------------------%
 
 canPlace(Board, ColNum-RowNum, Piece-Color):-
-    isInsideBoard(Board, NewColNum-NewRowNum), % check if ColNum-RowNum are inside the board
+    isInsideBoard(Board, ColNum-RowNum), % check if ColNum-RowNum are inside the board
     isEmptyCellCoords(Board, ColNum-RowNum), % check if coord is empty
-    replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in cell
+    replaceCell(Board, Piece-Color, ColNum-RowNum, NewBoard), % put piece in cell
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
-    !,
-    \+notAdjacentPlacement(Board, ColNum-RowNum, Color), % check if coord has any adjacent SAME COLOR pieces
-    !,
+    getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
+    \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
+    notAdjacentOpposingKing(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Color),   % check if coord is adjacent to the Opposing king
+    \+notAdjacentSameColorPiece(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Color), % check if coord has any adjacent SAME COLOR pieces
     isValidBoard(ArrangedBoard).
 
 canMove(Board, NewColNum-NewRowNum, Piece-Color):-
@@ -24,7 +25,7 @@ canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
     getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
     !,
-    \+notAdjacentMovement(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
+    \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
     !,
     isValidBoard(ArrangedBoard).
 
@@ -43,7 +44,6 @@ canPieceMove(Board, tower, OldColNum-OldRowNum, NewColNum-NewRowNum).
 % horse can move in L's
 canPieceMove(Board, horse, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-
 % pawn can move up, down, left or right
 canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     RowNumUpper is OldRowNum - 1,  RowNumLower is OldRowNum + 1,
@@ -61,7 +61,7 @@ canPieceMove(Board, pawn, OldColNum-OldRowNum, NewColNum-NewRowNum):-
 
 % ---- Aux Functions ---- %
 
-notAdjacentMovement([Row | Board], ColNum-RowNum):-
+notAdjacent([Row | Board], ColNum-RowNum):-
     length(Row, NumCols), length([Row | Board], NumRows),
     ColNum > 1, RowNum > 1,
     ColNum < NumCols, RowNum < NumRows,
@@ -76,39 +76,33 @@ notAdjacentMovement([Row | Board], ColNum-RowNum):-
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumLower),   % lower-left
     isEmptyCellCoords([Row | Board], ColNumLeft-RowNumUpper).   % upper-left
 
-notAdjacentPlacement([Row | Board], ColNum-RowNum, Piece-Color):-
+notAdjacentOpposingKing([Row | Board], ColNum-RowNum, Color):-
     length(Row, NumCols), length([Row | Board], NumRows),
+    ColNum > 1, RowNum > 1,
+    ColNum < NumCols, RowNum < NumRows,
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
 
-    isEmptyCellCoords([Row | Board], ColNum-RowNumUpper),       % upper
-    isOpposingKingCellCoords([Row | Board], ColNum-RowNumUpper, Color),       % upper
-    \+isSamePieceCellCoords([Row | Board], ColNum-RowNumUpper, Color),       % upper
+    \+isOpposingKingCellCoords([Row | Board], ColNum-RowNumUpper, Color),       % upper
+    \+isOpposingKingCellCoords([Row | Board], ColNumRight-RowNum, Color),       % right
+    \+isOpposingKingCellCoords([Row | Board], ColNum-RowNumLower, Color),       % lower
+    \+isOpposingKingCellCoords([Row | Board], ColNumLeft-RowNum, Color).       % left
 
-    isEmptyCellCoords([Row | Board], ColNumRight-RowNum),       % right
-    isOpposingKingCellCoords([Row | Board], ColNumRight-RowNum, Color),       % right
-    \+isSamePieceCellCoords([Row | Board], ColNumRight-RowNum, Color),       % right
-
-    isEmptyCellCoords([Row | Board], ColNum-RowNumLower),       % lower
-    isOpposingKingCellCoords([Row | Board], ColNum-RowNumLower, Color),       % lower
-    \+isSamePieceCellCoords([Row | Board], ColNum-RowNumLower, Color),       % lower
-
-    isEmptyCellCoords([Row | Board], ColNumLeft-RowNum),        % left
-    isOpposingKingCellCoords([Row | Board], ColNumLeft-RowNum, Color),       % left
-    \+isSamePieceCellCoords([Row | Board], ColNumLeft-RowNum, Color),       % left
-
-    isEmptyCellCoords([Row | Board], ColNumRight-RowNumLower),  % lower-right
-    \+isSamePieceCellCoords([Row | Board], ColNumRight-RowNumLower, Color),  % lower-right
-
-    isEmptyCellCoords([Row | Board], ColNumRight-RowNumUpper),  % upper-right
-    \+isSamePieceCellCoords([Row | Board], ColNumRight-RowNumUpper, Color),  % upper-right
-
-    isEmptyCellCoords([Row | Board], ColNumLeft-RowNumLower),   % lower-left
-    \+isSamePieceCellCoords([Row | Board], ColNumLeft-RowNumLower, Color),   % lower-left
-
-    isEmptyCellCoords([Row | Board], ColNumLeft-RowNumUpper),   % upper-left
-    \+isSamePieceCellCoords([Row | Board], ColNumLeft-RowNumUpper, Color).   % upper-left
-
+notAdjacentSameColorPiece([Row | Board], ColNum-RowNum, Color):-
+    length(Row, NumCols), length([Row | Board], NumRows),
+    ColNum > 1, RowNum > 1,
+    ColNum < NumCols, RowNum < NumRows,
+    RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
+    ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
+    
+    notSameColorPieceCellCoords([Row | Board], ColNum-RowNumUpper, Color),    % upper
+    notSameColorPieceCellCoords([Row | Board], ColNum-RowNumLower, Color),    % lower
+    notSameColorPieceCellCoords([Row | Board], ColNumRight-RowNum, Color),    % right
+    notSameColorPieceCellCoords([Row | Board], ColNumLeft-RowNum, Color),    % left
+    notSameColorPieceCellCoords([Row | Board], ColNumRight-RowNumUpper, Color),    % upper-right
+    notSameColorPieceCellCoords([Row | Board], ColNumLeft-RowNumUpper, Color),    % upper-left
+    notSameColorPieceCellCoords([Row | Board], ColNumLeft-RowNumLower, Color),    % lower-left
+    notSameColorPieceCellCoords([Row | Board], ColNumRight-RowNumLower, Color).    % lower-right
 
 isInsideBoard([Row | Board], ColNum-RowNum):-
     length(Row, NumCols), length([Row | Board], NumRows),
@@ -144,20 +138,10 @@ isValidBoardRows(Board, RowNum):-
 isKingCell(king-_).
 isOpposingKingCellCoords(Board, ColNum-RowNum, PlayingColor):-
     getCell(Board, ColNum-RowNum, Piece-Color),
+    getOpposingColor(PlayingColor, OpposingColor),
     isKingCell(Piece-Color),
-    PlayingColor \== Color.
+    OpposingColor == Color.
 
-isSamePieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
+notSameColorPieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
     getCell(Board, ColNum-RowNum, Piece-Color),
-    PlayingColor == Color.
-
-%testes, ignorar daqui para a frente
-testPlace:-
-    canPlace([
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-            [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-            [empty-empty, tower-black, king-black, tower-white, empty-empty],
-            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-            [empty-empty, queen-white, horse-black, empty-empty, empty-empty],
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-        ]                         , 1-3, pawn-white).
+    PlayingColor \== Color.

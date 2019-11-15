@@ -11,6 +11,9 @@ translate(empty, '.').
 translate(black, 'B').
 translate(white, 'W').
 
+getOpposingColor(white, black).
+getOpposingColor(black, white).
+
 % numbers to letters
 letter(1, a).
 letter(2, b).

@@ -10,7 +10,7 @@ intermediateBoard([
     [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
     [empty-empty, tower-black, king-black, tower-white, empty-empty],
     [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-    [empty-empty, queen-white, horse-black, empty-empty, empty-empty],
+    [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
     [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
 ]).
 
