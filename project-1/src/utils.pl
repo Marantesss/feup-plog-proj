@@ -1,3 +1,6 @@
+:-use_module(library(lists)).
+:-use_module(library(between)).
+
 % Pieces
 translate(king, 'k').
 translate(queen, 'q').
