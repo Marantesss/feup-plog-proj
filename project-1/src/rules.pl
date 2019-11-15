@@ -144,14 +144,14 @@ enemiesInPath(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
 
 % check down
 enemiesInPathAux(Board, Color, 0-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getCol(Board, OldColNum, Row),
-    splitList(Row, Path, OldRowNum, NewRowNum),
+    getCol(Board, OldColNum, Col),
+    splitList(Col, Path, OldRowNum, NewRowNum),
     member(_-black, Path).
 
 % check up
-enemiesInPathAux(Board, Color, 0-(-1), OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getCol(Board, OldColNum, Row),
-    splitList(Row, Path, NewRowNum, OldRowNum),
+enemiesInPathAux(Board, Color, 0- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getCol(Board, OldColNum, Col),
+    splitList(Col, Path, NewRowNum, OldRowNum),
     member(_-black, Path).
 
 % check right
@@ -162,32 +162,44 @@ enemiesInPathAux(Board, Color, 1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
 
 % check left
 enemiesInPathAux(Board, Color, -1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    write('Cona'),nl,
     getRow(Board, OldRowNum, Row),
     splitList(Row, Path, NewColNum, OldColNum),
     member(_-black, Path).
-    
 
-/*
-noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-FinalRowNum):-
-    CurrentX == FinalColNum,
-    CurrentY == FinalRowNum,
-    !,
-    fail.
 
-noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-FinalRowNum):-
-    getCell(Board, CurrentX-CurrentY, CellPiece-CellColor),
-    Color \== CellColor,
-    CellColor \== empty.
+% check left-up
+enemiesInPathAux(Board, Color, -1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalLeft(Board, OldColNum-OldRowNum, Diagonal),
+    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
+    splitList(Diagonal, Path, NewIndex, OldIndex),
+    member(_-black, Path).
 
-noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, CurrentX-Current, FinalColNum-FinalRowNum):-
-    NextX is CurrentX + DeltaX,
-    NextY is CurrentY + DeltaY,
-    noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, NextX-NextY, FinalColNum-FinalRowNum).
-*/
+% check left-down
+enemiesInPathAux(Board, Color, 1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalLeft(Board, OldColNum-OldRowNum, Diagonal),
+    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
+    splitList(Diagonal, Path, OldIndex, NewIndex),
+    member(_-black, Path).
+
+% check right-up
+enemiesInPathAux(Board, Color, 1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalRight(Board, OldColNum-OldRowNum, Diagonal),
+    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
+    splitList(Diagonal, Path, OldIndex, NewIndex),
+    member(_-black, Path).
+
+% check right-down
+enemiesInPathAux(Board, Color, -1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalRight(Board, OldColNum-OldRowNum, Diagonal),
+    trace,
+    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
+    splitList(Diagonal, Path, NewIndex, OldIndex),
+    member(_-black, Path).
+
 
 test:-
-    trace,
-    noEnemiesInPathAux(
+    enemiesInPathAux(
         [
             [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
             [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
@@ -197,9 +209,8 @@ test:-
             [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
         ],
         white,
-        0-(-1),
-        2-5, %queen-white
-        2-2
-    ),
-    notrace.
+        -1-1,
+        4-1, % queen-white
+        1-4
+    ).
     

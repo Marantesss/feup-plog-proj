@@ -31,4 +31,13 @@ splitList(List, [Elem | NewList], StartIndex, EndIndex):-
     nth1(StartIndex, List, Elem),
     N is StartIndex + 1,
     splitList(List, NewList, N, EndIndex).
-    
+
+getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex):-
+    OldColNum > OldRowNum,
+    % OldIndex = NewRowNum - OldRowNum + 1, 
+    OldIndex = OldRowNum,
+    NewIndex = NewRowNum.
+
+getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex):-
+    OldIndex = OldColNum,
+    NewIndex = NewColNum. 
