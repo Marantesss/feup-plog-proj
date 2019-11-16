@@ -39,44 +39,44 @@ validKingTranslation(1, 1).
 canPieceMove(Board, king-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validKingTranslation(DistX, DistY); validKingTranslation(DistX, DistY)).
+    (validKingTranslation(DistX, DistY); validKingTranslation(DistY, DistX)).
 
 % horse can move in L's
 validHorseTranslation(2, 1).
 canPieceMove(Board, horse-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validHorseTranslation(DistX, DistY); validHorseTranslation(DistX, DistY)).
+    (validHorseTranslation(DistX, DistY); validHorseTranslation(DistY, DistX)).
 
 % pawn can move up, down, left or right
 validPawnTranslation(1, 0).
 canPieceMove(Board, pawn-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validPawnTranslation(DistX, DistY); validPawnTranslation(DistX, DistY)).
+    (validPawnTranslation(DistX, DistY); validPawnTranslation(DistY, DistX)).
 
 % queen can move like bishop + tower
 canPieceMove(Board, queen-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
     (
-        validTowerTranslation(DistX, DistY); validTowerTranslation(DistX, DistY); % tower-like translation
-        validBishopTranslation(DistX, DistY); validBishopTranslation(DistX, DistY)  % bishop-like translation
+        validTowerTranslation(DistX, DistY); validTowerTranslation(DistY, DistX); % tower-like translation
+        validBishopTranslation(DistX, DistY); validBishopTranslation(DistY, DistX)  % bishop-like translation
     ).
 
-% bishop can diagonaly an arbitrary number of cells
+% bishop can move diagonaly an arbitrary number of cells
 validBishopTranslation(X, X).
 canPieceMove(Board, bishop-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validBishopTranslation(DistX, DistY); validBishopTranslation(DistX, DistY)).
+    (validBishopTranslation(DistX, DistY); validBishopTranslation(DistY, DistX)).
 
 % tower can move up, down, left or right an arbitrary number of cells
 validTowerTranslation(0, X).
 canPieceMove(Board, tower-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validTowerTranslation(DistX, DistY); validTowerTranslation(DistX, DistY)).
+    (validTowerTranslation(DistX, DistY); validTowerTranslation(DistY, DistX)).
 
 % ---- Aux Functions ---- %
 
@@ -154,8 +154,8 @@ isValidBoardRows(Board, RowNum):-
     NextRowNum is RowNum - 1,
     isValidBoardRows(Board, NextRowNum).
 
-% ---- King and opposing colors Conditions ---- %
-
+% ---- PLACEMENT ---- %
+% ---- Opposing King and Opposing colors Conditions ---- %
 isKingCell(king-_).
 isOpposingKingCellCoords(Board, ColNum-RowNum, PlayingColor):-
     getCell(Board, ColNum-RowNum, Piece-Color),
