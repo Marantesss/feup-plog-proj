@@ -170,31 +170,22 @@ enemiesInPathAux(Board, Color, -1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
 
 % check left-up
 enemiesInPathAux(Board, Color, -1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalLeft(Board, OldColNum-OldRowNum, Diagonal),
-    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
-    splitList(Diagonal, Path, NewIndex, OldIndex),
+    getDiagonalLeft(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Diagonal),
     member(_-black, Path).
 
 % check left-down
 enemiesInPathAux(Board, Color, 1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalLeft(Board, OldColNum-OldRowNum, Diagonal),
-    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
-    splitList(Diagonal, Path, OldIndex, NewIndex),
+    getDiagonalLeft(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Diagonal),
     member(_-black, Path).
 
 % check right-up
 enemiesInPathAux(Board, Color, 1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalRight(Board, OldColNum-OldRowNum, Diagonal),
-    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
-    splitList(Diagonal, Path, OldIndex, NewIndex),
+    getDiagonalRight(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Diagonal),
     member(_-black, Path).
 
 % check right-down
 enemiesInPathAux(Board, Color, -1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalRight(Board, OldColNum-OldRowNum, Diagonal),
-    trace,
-    getDiagonalIndex(OldColNum-OldRowNum, NewColNum-NewRowNum, OldIndex-NewIndex),
-    splitList(Diagonal, Path, NewIndex, OldIndex),
+    getDiagonalRight(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Diagonal),
     member(_-black, Path).
 
 

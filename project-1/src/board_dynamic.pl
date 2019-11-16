@@ -101,56 +101,25 @@ getCol([Row | Board], N, [Piece-Color | Col]):-
 getRow(Board, N, Col):-
     nth1(N, Board, Col).
 
-% ---- get diagonal / ----
-getDiagonalRight(Board, ColNum-RowNum, Diagonal):-
-    getDiagonalRightStartCoords(Board, ColNum-RowNum, StartCol-StartRow),
-    getDiagonalRightAux(Board, StartCol-StartRow, Diagonal).
+% ---- get diagonal /> ----
+getDiagonalRight(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, []):-
+    StartColNum > EndColNum.
 
-getDiagonalRightStartCoords(Board, ColNum-RowNum, StartCol-StartRow):-
-    length(Board, NumRows),
-    ColNum + RowNum =< NumRows,
-    StartCol is 1,
-    StartRow is RowNum - (StartCol - ColNum).
+getDiagonalRight(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, [Piece-Color | Diagonal]):-
+    NextCol is StartColNum + 1,
+    NextRow is StartRowNum - 1,
+    getDiagonalRight(Board, NextCol-NextRow, EndColNum-EndRowNum, Diagonal),
+    getCell(Board, StartColNum-StartRowNum, Piece-Color).
 
-getDiagonalRightStartCoords(Board, ColNum-RowNum, StartCol-StartRow):-
-    length(Board, NumCols),
-    StartRow is NumCols,
-    StartCol is ColNum - (StartRow - RowNum).
+% ---- get diagonal \> ----
+getDiagonalLeft(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, []):-
+    StartColNum > EndColNum.
 
-getDiagonalRightAux([Row | Board], ColNum-RowNum, []):-
-    length(Row, NumCols),
-    (RowNum < 1; ColNum > NumCols).
-
-getDiagonalRightAux(Board, ColNum-RowNum, [Piece-Color | Diagonal]):-
-    NextCol is ColNum + 1,
-    NextRow is RowNum - 1,
-    getDiagonalRightAux(Board, NextCol-NextRow, Diagonal),
-    getCell(Board, ColNum-RowNum, Piece-Color).
-
-% ---- get diagonal \ ----
-getDiagonalLeft(Board, ColNum-RowNum, Diagonal):-
-    getDiagonalLeftStartCoords(Board, ColNum-RowNum, StartCol-StartRow),
-    getDiagonalLeftAux(Board, StartCol-StartRow, Diagonal).
-
-getDiagonalLeftStartCoords(Board, ColNum-RowNum, StartCol-StartRow):-
-    ColNum > RowNum,
-    StartCol is ColNum - RowNum + 1,
-    StartRow is 1.
-
-getDiagonalLeftStartCoords(Board, ColNum-RowNum, StartCol-StartRow):-
-    StartRow is RowNum - ColNum + 1,
-    StartCol is 1.
-
-getDiagonalLeftAux([Row | Board], ColNum-RowNum, []):-
-    length([Row | Board], NumRows),
-    length(Row, NumCols),
-    (RowNum > NumRows; ColNum > NumCols).
-
-getDiagonalLeftAux(Board, ColNum-RowNum, [Piece-Color | Diagonal]):-
-    NextCol is ColNum + 1,
-    NextRow is RowNum + 1,
-    getDiagonalLeftAux(Board, NextCol-NextRow, Diagonal),
-    getCell(Board, ColNum-RowNum, Piece-Color).
+getDiagonalLeft(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, [Piece-Color | Diagonal]):-
+    NextCol is StartColNum + 1,
+    NextRow is StartRowNum + 1,
+    getDiagonalLeft(Board, NextCol-NextRow, EndColNum-EndRowNum, Diagonal),
+    getCell(Board, StartColNum-StartRowNum, Piece-Color).
 
 % ---- piece is not on the board
 getCellRow([], ReturnRow, Cell):-
