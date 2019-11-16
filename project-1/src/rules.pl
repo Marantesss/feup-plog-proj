@@ -170,38 +170,22 @@ enemiesInPathAux(Board, Color, -1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
 
 % check left-up
 enemiesInPathAux(Board, Color, -1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalLeft(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Diagonal),
+    getDiagonalLeft(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Path),
     member(_-black, Path).
 
 % check left-down
 enemiesInPathAux(Board, Color, 1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalLeft(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Diagonal),
+    getDiagonalLeft(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Path),
     member(_-black, Path).
 
 % check right-up
 enemiesInPathAux(Board, Color, 1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalRight(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Diagonal),
+    getDiagonalRight(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Path),
     member(_-black, Path).
 
 % check right-down
 enemiesInPathAux(Board, Color, -1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getDiagonalRight(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Diagonal),
+    getDiagonalRight(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Path),
     member(_-black, Path).
 
-
-test:-
-    enemiesInPathAux(
-        [
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-            [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-            [empty-empty, tower-black, king-black, tower-white, empty-empty],
-            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-            [empty-empty, queen-white, horse-black, empty-empty, empty-empty],
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-        ],
-        white,
-        -1-1,
-        4-1, % queen-white
-        1-4
-    ).
     
