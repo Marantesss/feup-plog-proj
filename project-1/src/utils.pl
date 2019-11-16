@@ -26,3 +26,11 @@ letter(5, e).
 letter(6, f).
 % error
 letter(_, z).
+
+splitList(List, [], StartIndex, EndIndex):-
+    StartIndex > EndIndex.
+
+splitList(List, [Elem | NewList], StartIndex, EndIndex):-
+    nth1(StartIndex, List, Elem),
+    N is StartIndex + 1,
+    splitList(List, NewList, N, EndIndex).

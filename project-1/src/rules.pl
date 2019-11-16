@@ -20,6 +20,7 @@ canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     getCellCoords(Board, OldColNum-OldRowNum, Piece-Color),
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
     canPieceMove(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
+    % detect if there are enemies in path
     replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
     replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
@@ -153,6 +154,76 @@ isValidBoardRows(Board, RowNum):-
     \+isEmptyRow(Board, RowNum),
     NextRowNum is RowNum - 1,
     isValidBoardRows(Board, NextRowNum).
+
+
+getDeltaX(OldX, NewX, 0):-
+    NewX =:= OldX.
+getDeltaX(OldX, NewX, 1):-
+    NewX > OldX.
+getDeltaX(OldX, NewX, -1):-
+    NewX < OldX.
+
+getDeltaY(OldY, NewY, 0):-
+    NewX =:= OldX.
+getDeltaY(OldY, NewY, 1):-
+    NewX < OldX.
+getDeltaY(OldY, NewY, -1):-
+    NewX > OldX.
+
+% horse can go through all pieces
+enemiesInPath(Board, horse-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
+
+enemiesInPath(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDeltaX(OldColNum, NewColNum, DeltaX),
+    getDeltaY(OldRowNum, NewRowNum, DeltaY),
+    \+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, OldColNum-OldRowNum, NewColNum-NewRowNum).
+
+% check down
+enemiesInPathAux(Board, Color, 0-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getCol(Board, OldColNum, Col),
+    splitList(Col, Path, OldRowNum, NewRowNum),
+    member(_-black, Path).
+
+% check up
+enemiesInPathAux(Board, Color, 0- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getCol(Board, OldColNum, Col),
+    splitList(Col, Path, NewRowNum, OldRowNum),
+    member(_-black, Path).
+
+% check right
+enemiesInPathAux(Board, Color, 1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getRow(Board, OldRowNum, Row),
+    splitList(Row, Path, OldColNum, NewColNum),
+    member(_-black, Path).
+
+% check left
+enemiesInPathAux(Board, Color, -1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    write('Cona'),nl,
+    getRow(Board, OldRowNum, Row),
+    splitList(Row, Path, NewColNum, OldColNum),
+    member(_-black, Path).
+
+
+% check left-up
+enemiesInPathAux(Board, Color, -1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalLeft(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Path),
+    member(_-black, Path).
+
+% check left-down
+enemiesInPathAux(Board, Color, 1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalLeft(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Path),
+    member(_-black, Path).
+
+% check right-up
+enemiesInPathAux(Board, Color, 1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalRight(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Path),
+    member(_-black, Path).
+
+% check right-down
+enemiesInPathAux(Board, Color, -1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    getDiagonalRight(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Path),
+    member(_-black, Path).
+
 
 % ---- King and opposing colors Conditions ---- %
 

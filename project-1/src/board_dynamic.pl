@@ -93,7 +93,33 @@ checkRight(Board, Board).
 %----------------- Aux Predicados ------------------%
 %---------------------------------------------------%
 
-% ---- gets cell coordinates when cell is known.
+getCol([], _, []).
+getCol([Row | Board], N, [Piece-Color | Col]):-
+    nth1(N, Row, Piece-Color),
+    getCol(Board, N, Col).
+
+getRow(Board, N, Col):-
+    nth1(N, Board, Col).
+
+% ---- get diagonal /> ----
+getDiagonalRight(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, []):-
+    StartColNum > EndColNum.
+
+getDiagonalRight(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, [Piece-Color | Diagonal]):-
+    NextCol is StartColNum + 1,
+    NextRow is StartRowNum - 1,
+    getDiagonalRight(Board, NextCol-NextRow, EndColNum-EndRowNum, Diagonal),
+    getCell(Board, StartColNum-StartRowNum, Piece-Color).
+
+% ---- get diagonal \> ----
+getDiagonalLeft(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, []):-
+    StartColNum > EndColNum.
+
+getDiagonalLeft(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, [Piece-Color | Diagonal]):-
+    NextCol is StartColNum + 1,
+    NextRow is StartRowNum + 1,
+    getDiagonalLeft(Board, NextCol-NextRow, EndColNum-EndRowNum, Diagonal),
+    getCell(Board, StartColNum-StartRowNum, Piece-Color).
 
 % ---- piece is not on the board
 getCellRow([], ReturnRow, Cell):-
@@ -103,6 +129,7 @@ getCellRow([Row | _], ReturnRow, Cell):-
     member(Cell, Row),
     ReturnRow = Row.
 
+% ---- gets cell coordinates when cell is known.
 getCellRow([Row | Board], ReturnRow, Cell):-
     getCellRow(Board, ReturnRow, Cell).
 
