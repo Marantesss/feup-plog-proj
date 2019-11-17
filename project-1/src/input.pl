@@ -13,45 +13,27 @@ readGameInput(Board, Piece, ColNum-RowNum):-
 %------------------ MENU OPTIONS -------------------%
 %---------------------------------------------------%
 
-readOption:-
+readOption(Option):-
     write('> Insert your option: '),
-    read(Input),
-    validateOption(Input).
+    read(ReadOption),
+    (
+        % option is valid
+        (
+            validateOption(ReadOption),
+            Option = ReadOption
+        );
+        % or try again
+        (
+            write('ERROR: Please enter option again.'), nl,
+            readOption(Option)  
+        )
+    ).
 
-validateOption(1) :-
-    write('Player vs Player'), nl,
-    readOption.
-    /*
-    startGame('C','C'),
-    mainMenu.
-    */
-
-validateOption(2) :-
-    write('Player vs PC'), nl,
-    readOption.
-    /*
-    startGame('C','C'),
-    mainMenu.
-    */
-
-validateOption(3) :-
-    write('PC vs PC'), nl,
-    readOption.
-    /*
-    startGame('C','C'),
-    mainMenu.
-    */
-    
-validateOption(0) :-
-    nl,
-    write('Exiting...'),
-    nl, nl.
-
-validateOption(_Other) :-
-    nl,
-    write('ERROR: that option does not exist.'),
-    nl, nl,
-    readOption.
+validateOption(1). % Player vs Player
+validateOption(2). % Player vs Computer
+validateOption(3). % Computer vs Player
+validateOption(4). % Computer vs Computer
+validateOption(0). % Exit
 
 %---------------------------------------------------%
 %---------------- PLAYER MOVEMENTS -----------------%
@@ -61,8 +43,19 @@ validateOption(_Other) :-
 
 readPiece(Piece):-
     write('> Piece Name: '),
-    read(Piece),
-    validatePiece(Piece).
+    read(ReadPiece),
+    (
+        % piece is valid
+        (
+            validPiece(ReadPiece),
+            Piece = ReadPiece
+        );
+        % or try again
+        (
+            write('ERROR: Please enter Piece name again.'), nl,
+            readPiece(Piece)  
+        )
+    ).
 
 validatePiece(pawn).
 validatePiece(king).
@@ -87,36 +80,49 @@ validateYesNo(YesNo):-
     readMovePawnAgain(YesNo). % Reads option again when user input fails
 
 
+
 % --- Columns --- %
 
 readCol(Board, ColNum):-
     write('> Column Number: '),
-    read(ColNum),
-    validateColNum(Board, ColNum).
+    read(ReadColNum),
+    (
+        % col is valid
+        (
+            validateColNum(Board, ReadColNum),
+            ColNum = ReadColNum
+        );
+        % or try again
+        (
+            write('ERROR: Please enter Column number again.'), nl,
+            readCol(Board, ColNum)
+        )
+    ).
 
 validateColNum([Row | Board], ColNum):-
-    ColNum > 0,
     length(Row, RowLenght),
-    ColNum =< RowLenght.
-
-validateColNum(Board, ColNum):-
-    write('ERROR: Please enter Column number again.'), nl,
-    readCol(Board, ColNum). % Reads col again when user input fails
+    between(1, RowLenght, ColNum).
 
 % --- Rows --- %
 
 readRow(Board, RowNum):-
     write('> Row letter: '),
     read(RowLet),
-    validateRowNum(Board, RowLet, RowNum).
+    (
+        % row is valid
+        (
+            validateRowNum(Board, RowLet, ReadRowNum),
+            RowNum = ReadRowNum
+        );
+        % or try again
+        (
+            write('ERROR: Please enter Row letter again.'), nl,
+            readRow(Board, RowNum)
+        )
+    ).
 
 validateRowNum(Board, RowLet, RowNum):-
     letter(RowNum, RowLet),
-    RowNum > 0,
     length(Board, ColLenght),
-    RowNum =< ColLenght.
-
-validateRowNum(Board, RowLet, RowNum):-
-    write('ERROR: Please enter Row letter again.'), nl,
-    readRow(Board, RowNum). % Reads row again when user input fails
+    between(1, ColLenght, RowNum).
     
