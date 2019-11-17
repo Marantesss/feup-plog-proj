@@ -18,7 +18,7 @@ getPossiblePlaces([Row | Board], Piece-Color, PossiblePlaces):-
         between(1, MaxRowNumber, RowNum),
         canPlace(Board, ColNum-RowNum, Piece-Color)
     ),
-    setof(ColNum-RowNum, Goal, PossibleMoves).
+    setof(ColNum-RowNum, Goal, PossiblePlaces).
 
 getPossibleMoves([Row | Board], Piece-Color, PossibleMoves):-
     length(Row, MaxColNumber),
@@ -30,28 +30,3 @@ getPossibleMoves([Row | Board], Piece-Color, PossibleMoves):-
         canMove(Board, ColNum-RowNum, Piece-Color)
     ),
     setof(ColNum-RowNum, Goal, PossibleMoves).
- 
-/*
-testPlace:-
-    getPossiblePlaces([
-        [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-        [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-        [empty-empty, tower-black, king-black, tower-white, empty-empty],
-        [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-        [empty-empty, queen-white, horse-black, empty-empty, empty-empty],
-        [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-        ], tower-black, PM),
-    write(PM).
-*/
-
-testMove:-
-    getPossibleMoves([
-        [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-        [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-        [empty-empty, tower-black, king-black, tower-white, empty-empty],
-        [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-        [empty-empty, queen-white, horse-black, empty-empty, empty-empty],
-        [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-        ], tower-black, PM),
-    write(PM).
-

@@ -8,23 +8,6 @@ readGameInput(Board, Piece, ColNum-RowNum):-
     readPiece(Piece),
     readCol(Board, ColNum),
     readRow(Board, RowNum).
-/*
-test:-
-    readGameInput(
-        [
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-            [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-            [empty-empty, tower-black, king-black, tower-white, empty-empty],
-            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-            [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-        ],
-        Piece, ColNum, RowNum
-    ),
-    write(Piece), nl,
-    write(ColNum), nl,
-    write(RowNum), nl.
-*/
 
 %---------------------------------------------------%
 %------------------ MENU OPTIONS -------------------%
@@ -92,16 +75,16 @@ validatePiece(Piece):-
     readPiece(Piece). % Reads piece again when user input fails
 
 % --- Pawn movemente again --- %
-readPawnPieceAgain:-
+readMovePawnAgain(YesNo):-
     write('> Do you wish to move the pawn: '),
     read(YesNo),
     validateYesNo(YesNo).
 
 validateYesNo(yes).
-validateYesNo(no):- fail.
+validateYesNo(no).
 validateYesNo(YesNo):-
-    write('ERROR: Please enter 'yes' or 'no' only.'), nl,
-    readPawnPieceAgain(YesNo). % Reads option again when user input fails
+    write('ERROR: Please enter -yes- or -no- only.'), nl,
+    readMovePawnAgain(YesNo). % Reads option again when user input fails
 
 
 % --- Columns --- %

@@ -12,16 +12,43 @@ menu:-
     printMenu,
     readOption.
 
+% placing pawn gives you an extra move
+play(Board, pawn-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
+    getPossiblePlaces(Board, pawn-Color, PossiblePlaces),
+    (
+        % either move is valid
+        (
+            member(NewColNum-NewRowNum, PossiblePlaces),
+            placePiece(Board, pawn-Color, NewColNum-NewRowNum, NewBoard),
+            readMovePawnAgain(YesNo),
+            movePawnAgain(Board, Color, NewBoard, YesNo)
+        );
+        % or try again
+        (
+            write('ERROR: Invalid move'), nl,
+            readGameInput(Board, pawn, NewNewColNum-NewNewRowNum),
+            getCellCoords(Board, NewOldColNum-NewOldRowNum, pawn-Color),
+            play(Board, pawn-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
+        )
+    ).
+    
+% the extra move
+movePawnAgain(Board, Color, NewBoard, no).
+movePawnAgain(Board, Color, NewBoard, yes):-
+    readCol(Board, NewColNum),
+    readRow(Board, NewRowNum),
+    getCellCoords(Board, OldColNum-OldRowNum, pawn-Color),
+    play(Board, pawn-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
+
+
 % placement
 play(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
     getPossiblePlaces(Board, Piece-Color, PossibleMoves),
     (
         % either move is valid
         (
-            trace,
             member(NewColNum-NewRowNum, PossibleMoves),
-            placePiece(Board, Piece-Color, NewColNum-NewRowNum, NewBoard),
-            notrace
+            placePiece(Board, Piece-Color, NewColNum-NewRowNum, NewBoard)
         );
         % or try again
         (
@@ -32,33 +59,6 @@ play(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
         )
     ).
 
-% placing pawn gives you an extra move
-play(Board, pawn-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
-    getPossiblePlaces(Board, pawn-Color, PossibleMoves),
-    (
-        % either move is valid
-        (
-            trace,
-            member(NewColNum-NewRowNum, PossibleMoves),
-            placePiece(Board, pawn-Color, NewColNum-NewRowNum, NewBoard),
-            notrace
-        );
-        % or try again
-        (
-            write('ERROR: Invalid move'), nl,
-            readGameInput(Board, pawn, NewNewColNum-NewNewRowNum),
-            getCellCoords(Board, NewOldColNum-NewOldRowNum, pawn-Color),
-            play(Board, pawn-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
-        )
-    ),
-    % the extra move
-    % play nao pode dar no, hmmm
-    write('falta implementar a cena do peao'), nl.
-    % readPawnPieceAgain,
-    % readGameInput(NewBoard, pawn, NewNewColNum-NewNewRowNum),
-    % getCellCoords(NewBoard, NewColNum-NewRowNum, pawn-Color),
-    % play(NewBoard, pawn-Color, NewColNum-NewRowNum, NewNewColNum-NewNewRowNum, EvenNewerBoard).
-
 % movement
 play(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
     getPossibleMoves(Board, Piece-Color, PossibleMoves),
@@ -66,7 +66,7 @@ play(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
         % either move is valid
         (
             member(NewColNum-NewRowNum, PossibleMoves),
-            movePiece(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
+            movePiece(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard)
         );
         % or try again
         (
@@ -115,23 +115,14 @@ gameLoop(Board, Player1, Player2):-
             )
         )
     ).
-
-
-/*
-test:-
-    play(
-            [
-                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-                [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-                [empty-empty, tower-black, king-black, tower-white, empty-empty],
-                [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-                [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
-                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-            ],
-            tower-black,
-            2-3,
-            2-1,
-            NB
-    ),
-    printBoard(NB).
-*/
+testPawn:-
+    play([
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
+            [empty-empty, tower-black, king-black, tower-white, empty-empty],
+            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
+            [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
+        ]  , pawn-white, 0-0, 4-5, NB
+        ),
+        printBoard(NB).

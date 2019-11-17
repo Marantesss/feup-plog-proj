@@ -238,16 +238,13 @@ notSameColorPieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
     getCell(Board, ColNum-RowNum, Piece-Color),
     PlayingColor \== Color.
 
-% teste: ignorar
-test:-
-    canPlace(
-            [
-                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-                [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-                [empty-empty, tower-black, king-black, tower-white, empty-empty],
-                [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-                [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
-                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-            ], 2-2, pawn-white
-        
+testPlace:-
+    canPlace([
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
+            [empty-empty, tower-black, king-black, tower-white, empty-empty],
+            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
+            [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
+        ]  , 4-5, pawn-white
         ).
