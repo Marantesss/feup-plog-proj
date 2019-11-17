@@ -260,31 +260,7 @@ notSameColorPieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
     getCell(Board, ColNum-RowNum, Piece-Color),
     PlayingColor \== Color.
 
-% ---- ROYALTY ---- %
 % ---- check if king or queen are trapped ---- %
-
-t:-
-    trace,
-    test.
-
-test:-
-    getPlayableBoard(
-            [
-                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-                [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
-                [empty-empty, empty-empty, king-black, empty-empty, empty-empty],
-                [empty-empty, tower-black, horse-white, tower-white, empty-empty],
-                [empty-empty, queen-white, king-white, horse-white, empty-empty],
-                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-            ],
-            PlayableBoard),
-    printBoard(PlayableBoard),
-    !,
-    getCellCoords(PlayableBoard, ColNum-RowNum, king-white),
-    isTrapped(
-        PlayableBoard,
-        ColNum-RowNum
-    ).
 
 % caso geral
 isTrapped([Row | Board], ColNum-RowNum):-
