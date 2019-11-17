@@ -1,4 +1,4 @@
-:- consult('board_dynamic.pl').
+:- consult('board_dynamic.pl'). % already consults utils.pl
 
 %---------------------------------------------------%
 %----------------- Main predicates ----------------%

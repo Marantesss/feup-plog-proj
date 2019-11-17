@@ -1,4 +1,4 @@
-:- consult('board_dynamic.pl').
+:- consult('utils.pl').
 :- use_module(library(random)).
 
 pieceList([king, queen, bishop, horse, tower, pawn]).
