@@ -1,6 +1,32 @@
 :-consult('utils.pl').
 
 %---------------------------------------------------%
+%------------------ GAME OPTIONS -------------------%
+%---------------------------------------------------%
+
+readGameInput(Board, Piece, ColNum-RowNum):-
+    readPiece(Piece),
+    readCol(Board, ColNum),
+    readRow(Board, RowNum).
+/*
+test:-
+    readGameInput(
+        [
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
+            [empty-empty, tower-black, king-black, tower-white, empty-empty],
+            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
+            [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
+            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
+        ],
+        Piece, ColNum, RowNum
+    ),
+    write(Piece), nl,
+    write(ColNum), nl,
+    write(RowNum), nl.
+*/
+
+%---------------------------------------------------%
 %------------------ MENU OPTIONS -------------------%
 %---------------------------------------------------%
 
@@ -47,6 +73,25 @@ validateOption(_Other) :-
 %---------------------------------------------------%
 %---------------- PLAYER MOVEMENTS -----------------%
 %---------------------------------------------------%
+
+% --- Pieces --- %
+
+readPiece(Piece):-
+    write('> Piece Name: '),
+    read(Piece),
+    validatePiece(Piece).
+
+validatePiece(pawn).
+validatePiece(king).
+validatePiece(queen).
+validatePiece(horse).
+validatePiece(bishop).
+validatePiece(tower).
+validatePiece(Piece):-
+    write('ERROR: Please enter Piece name again.'), nl,
+    readPiece(Piece). % Reads piece again when user input fails
+
+
 
 % --- Columns --- %
 
