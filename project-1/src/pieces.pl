@@ -31,7 +31,7 @@ getPossibleMoves([Row | Board], Piece-Color, PossibleMoves):-
     ),
     setof(ColNum-RowNum, Goal, PossibleMoves).
  
-/*
+
 testPlace:-
     getPossiblePlaces([
         [empty-empty, empty-empty, empty-empty, empty-empty],
@@ -41,7 +41,7 @@ testPlace:-
         [empty-empty, empty-empty, empty-empty, empty-empty]
     ], tower-black, PM),
     write(PM).
-*/
+
 
 testMove:-
     getPossibleMoves([
