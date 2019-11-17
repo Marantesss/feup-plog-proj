@@ -264,6 +264,15 @@ notSameColorPieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
     PlayingColor \== Color.
 
 % ---- check if king or queen are trapped ---- %
+isKingTrapped(Board, Color):-
+    getPlayableBoard(Board, PlayableBoard),
+    getCellCoords(PlayableBoard, ColNum-RowNum, king-Color),
+    isTrapped(PlayableBoard, ColNum-RowNum).
+
+isQueenTrapped(Board, Color):-
+    getPlayableBoard(Board, PlayableBoard),
+    getCellCoords(PlayableBoard, ColNum-RowNum, queen-Color),
+    isTrapped(PlayableBoard, ColNum-RowNum).
 
 % caso geral
 isTrapped([Row | Board], ColNum-RowNum):-
