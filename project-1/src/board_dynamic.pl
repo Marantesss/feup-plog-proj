@@ -1,8 +1,10 @@
 :-consult('utils.pl').
+:-consult('display.pl').
 
 %---------------------------------------------------%
 %----------------- MAIN FUNCTION  ------------------%
 %--------- add and remove rows and/or cols ---------%
+%-------------- get the playable area --------------%
 %---------------------------------------------------%
 
 rearrangeBoard(Board, NewBoard):-
@@ -10,6 +12,28 @@ rearrangeBoard(Board, NewBoard):-
     checkBot(TopBoard, BotBoard), % add or remove bot row
     checkLeft(BotBoard, LeftBoard), % add or remove left row
     checkRight(LeftBoard, NewBoard). % add or remove right row
+
+
+getPlayableBoard(Board, NewBoard):-
+    checkBorderRows(Board, RowBoard),
+    checkBorderCols(RowBoard, NewBoard).
+
+checkBorderRows(Board, NewBoard):-
+    length(Board, NumRows),
+    6 == NumRows,
+    removeTopRow(Board, RowBoard),
+    removeBottomRow(RowBoard, NewBoard).
+
+checkBorderRows(Board, Board).
+
+checkBorderCols([Row | Board], NewBoard):-
+    length(Row, NumCols),
+    6 == NumCols,
+    removeLeftColumn([Row | Board], ColBoard),
+    removeRightColumn(ColBoard, NewBoard).
+
+checkBorderCols(Board, Board).
+
 
 %---------------------------------------------------%
 %----- REMOVE WHEN EMPTY / ADD WHEN NOT EMPTY ------%

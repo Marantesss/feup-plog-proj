@@ -170,84 +170,109 @@ notSameColorPieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
 % ---- ROYALTY ---- %
 % ---- check if king or queen are trapped ---- %
 
-%fazer getcellcoords antes de chamar este predicado
-%negar onde este predicado eh chamado (ou nao...)
-%king
+t:-
+    trace,
+    test.
+
+test:-
+    getPlayableBoard(
+            [
+                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
+                [empty-empty, empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
+                [empty-empty, empty-empty, empty-empty, king-black, empty-empty, empty-empty],
+                [empty-empty, horse-white, tower-black, empty-empty, tower-white, empty-empty],
+                [empty-empty, empty-empty, queen-white, horse-white, king-white, empty-empty],
+                [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
+            ],
+            PlayableBoard),
+    getCellCoords(PlayableBoard, ColNum-RowNum, king-white),
+    trace,
+    isTrapped(
+        PlayableBoard,
+        ColNum-RowNum
+    ).
+
 % caso geral
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
     ColNum > 1, RowNum > 1,
     ColNum < NumCols, RowNum < NumRows,
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumUpper), % check if upper coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumLower), % check if lower coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumLeft-RowNum), % check if left coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumRight-RowNum). % check if right coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumUpper), % check if upper coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumLower), % check if lower coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumLeft-RowNum), % check if left coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumRight-RowNum). % check if right coord is empty
 
 % ---- SIDES ---- %
 % right side
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
-    ColNum =:= NumCols, RowNum > 1,
-    RowNum < NumRows,
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
+    write('Cona'), nl,
+    RowNum > 1, RowNum < NumRows,
+    ColNum =:= NumCols,
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumUpper), % check if upper coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumLower), % check if lower coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumLeft-RowNum). % check if left coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumUpper), % check if upper coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumLower), % check if lower coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumLeft-RowNum). % check if left coord is empty
+
 
 % lower side
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
-    ColNum > 1, RowNum =:= NumRows,
-    ColNum < NumCols,
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
+    ColNum > 1, ColNum < NumCols,
+    RowNum =:= NumRows,
+    write('Cona1'), nl,
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumUpper), % check if upper coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumLeft-RowNum), % check if left coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumRight-RowNum). % check if right coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumUpper), % check if upper coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumLeft-RowNum), % check if left coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumRight-RowNum). % check if right coord is empty
 
 % left side
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
     ColNum =:= 1, RowNum > 1,
     RowNum < NumRows,
+    write('Cona2'), nl,
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumUpper), % check if upper coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumLower), % check if lower coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumRight-RowNum). % check if right coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumUpper), % check if upper coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumLower), % check if lower coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumRight-RowNum). % check if right coord is empty
 
 % upper side
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
     ColNum > 1, RowNum =:= 1,
     ColNum < NumCols,
+    write('Cona3'), nl,
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumLower), % check if lower coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumLeft-RowNum), % check if left coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumRight-RowNum). % check if right coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumLower), % check if lower coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumLeft-RowNum), % check if left coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumRight-RowNum). % check if right coord is empty
 
 % ----  CORNERS ---- %
 % upper right corner
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
     ColNum =:= 1, RowNum =:= NumRows,
+    write('Cona4'), nl,
     RowNumUpper is RowNum - 1,  RowNumLower is RowNum + 1,
     ColNumLeft is ColNum - 1,  ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumLower), % check if lower coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumLeft-RowNum). % check if left coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumLower), % check if lower coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumLeft-RowNum). % check if left coord is empty
 
 % lower right corner
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
+isTrapped([Row | Board], ColNum-RowNum):-
     length(Row, NumCols), length([Row | Board], NumRows),
     ColNum =:= NumCols, RowNum =:= NumRows,
     RowNumUpper is RowNum - 1,
@@ -257,32 +282,21 @@ trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
     \+isEmptyCellCoords([Row | Board], ColNumLeft-RowNum). % check if left coord is empty
 
 % lower left corner
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
     ColNum =:= NumCols, RowNum =:= 1,
     RowNumUpper is RowNum - 1,
     ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumUpper), % check if upper coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumRight-RowNum). % check if right coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumUpper), % check if upper coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumRight-RowNum). % check if right coord is empty
 
 % upper left corner
-trappedRoyalty([Row | Board], ColNum-RowNum, king-Color):-
-    length(Row, NumCols), length([Row | Board], NumRows),
+isTrapped([Row | Board], ColNum-RowNum):-
+    length(Row, NumCols), length([Row | PlayableBoard], NumRows),
     ColNum =:= 1, RowNum =:= 1,
     RowNumLower is RowNum + 1,
     ColNumRight is ColNum + 1,
 
-    \+isEmptyCellCoords([Row | Board], ColNum-RowNumLower), % check if lower coord is empty
-    \+isEmptyCellCoords([Row | Board], ColNumRight-RowNum). % check if right coord is empty
-
-% testes: ignorar / apagar quando estiver acabado
-ola:-
-    trappedRoyalty([
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
-            [empty-empty, king-black, pawn-black, horse-black, empty-empty],
-            [empty-empty, tower-black, empty-empty, tower-white, empty-empty],
-            [empty-empty, empty-empty, king-white, empty-empty, empty-empty],
-            [empty-empty, queen-white, horse-white, empty-empty, empty-empty],
-            [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]
-        ], 2-2, king-black).
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNum-RowNumLower), % check if lower coord is empty
+    \+isEmptyCellCoords([Row | PlayableBoard], ColNumRight-RowNum). % check if right coord is empty
