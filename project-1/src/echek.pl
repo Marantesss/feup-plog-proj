@@ -101,10 +101,10 @@ gameLoop(Board, Player1, Player2):-
     ).
 
 % placing pawn gives you an extra move
-play(Board, pawn-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
+move(Board, pawn-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
     getPossiblePlaces(Board, pawn-Color, PossiblePlaces),
     (
-        % either move is valid
+        % either place is valid
         (
             member(NewColNum-NewRowNum, PossiblePlaces),
             placePiece(Board, pawn-Color, NewColNum-NewRowNum, NewBoard),
@@ -116,7 +116,7 @@ play(Board, pawn-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
             write('ERROR: Invalid move'), nl,
             readGameInput(Board, pawn, NewNewColNum-NewNewRowNum),
             getCellCoords(Board, NewOldColNum-NewOldRowNum, pawn-Color),
-            play(Board, pawn-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
+            move(Board, pawn-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
         )
     ).
     
@@ -126,14 +126,14 @@ movePawnAgain(Board, Color, NewBoard, yes):-
     readCol(Board, NewColNum),
     readRow(Board, NewRowNum),
     getCellCoords(Board, OldColNum-OldRowNum, pawn-Color),
-    play(Board, pawn-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
+    move(Board, pawn-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
 
 
 % placement
 move(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
     getPossiblePlaces(Board, Piece-Color, PossibleMoves),
     (
-        % either move is valid
+        % either place is valid
         (
             member(NewColNum-NewRowNum, PossibleMoves),
             placePiece(Board, Piece-Color, NewColNum-NewRowNum, NewBoard)
@@ -197,7 +197,7 @@ blackPlayerTurn(Board, computer, NewBoard):-
     bot_move(Board, 1, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
 
 testPawn:-
-    play([
+    move([
             [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty],
             [empty-empty, empty-empty, empty-empty, bishop-black, empty-empty],
             [empty-empty, tower-black, king-black, tower-white, empty-empty],
