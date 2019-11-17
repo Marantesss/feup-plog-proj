@@ -191,8 +191,6 @@ blackPlayerTurn(Board, player, NewBoard):-
     move(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
 
 blackPlayerTurn(Board, computer, NewBoard):-
-    nl, write('-------- COMPUTER BLACK --------'), nl, nl.
-    % bot play
     nl, write('-------- COMPUTER BLACK --------'), nl, nl,
     sleep(1),
     choose_move(Board, 1, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum),
