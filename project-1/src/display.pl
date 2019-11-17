@@ -89,17 +89,3 @@ printCell(Piece-Color):-
     write(Char),
     translate(Color, Char2),
     write(Char2).
-
-/* Predicados uteis:
-nth0, nth1 -> usar o google :)
-select\3\4 -> select(b, [a, b, c], d, Lista): troca b por d na lista [a, b, c] -> Lista = [a, d, c]
-reverse\2 ->
-append\2\3 -> concatenacao de 2 listas
-last\2 -> vai buscar o ultimo argumento
-transpose\2 -> transposta de uma matriz
-maplist\2\3\4 ->
-remove_dups\2 ->
-sumlist\2 ->
-sort -> 
-length -> 
-*/

@@ -141,7 +141,6 @@ isInsideBoard([Row | Board], ColNum-RowNum):-
     between(1, NumRows, RowNum),
     between(1, NumCols, ColNum).
 
-% DOES NOT WORK FOR ALL CASES
 % all the pieces are touching one another if the board has no empty rows or cols besides the borders
 isValidBoard([Row | Board]):-
     % test if rows are empty

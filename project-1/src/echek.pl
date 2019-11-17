@@ -118,8 +118,6 @@ move(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
         )
     ).
 
-% placing pawn gives you an extra move
-
 % movement
 move(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
     valid_moves(Board, Piece-Color, PossibleMoves),
