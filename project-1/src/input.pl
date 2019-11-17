@@ -91,6 +91,17 @@ validatePiece(Piece):-
     write('ERROR: Please enter Piece name again.'), nl,
     readPiece(Piece). % Reads piece again when user input fails
 
+% --- Pawn movemente again --- %
+readPawnPieceAgain:-
+    write('> Do you wish to move the pawn: '),
+    read(YesNo),
+    validateYesNo(YesNo).
+
+validateYesNo(yes).
+validateYesNo(no):- fail.
+validateYesNo(YesNo):-
+    write('ERROR: Please enter 'yes' or 'no' only.'), nl,
+    readPawnPieceAgain(YesNo). % Reads option again when user input fails
 
 
 % --- Columns --- %

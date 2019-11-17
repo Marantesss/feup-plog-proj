@@ -33,6 +33,31 @@ play(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
     ).
 
 % placing pawn gives you an extra move
+play(Board, pawn-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
+    getPossiblePlaces(Board, pawn-Color, PossibleMoves),
+    (
+        % either move is valid
+        (
+            trace,
+            member(NewColNum-NewRowNum, PossibleMoves),
+            placePiece(Board, pawn-Color, NewColNum-NewRowNum, NewBoard),
+            notrace
+        );
+        % or try again
+        (
+            write('ERROR: Invalid move'), nl,
+            readGameInput(Board, pawn, NewNewColNum-NewNewRowNum),
+            getCellCoords(Board, NewOldColNum-NewOldRowNum, pawn-Color),
+            play(Board, pawn-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
+        )
+    ),
+    % the extra move
+    % play nao pode dar no, hmmm
+    write('falta implementar a cena do peao'), nl.
+    % readPawnPieceAgain,
+    % readGameInput(NewBoard, pawn, NewNewColNum-NewNewRowNum),
+    % getCellCoords(NewBoard, NewColNum-NewRowNum, pawn-Color),
+    % play(NewBoard, pawn-Color, NewColNum-NewRowNum, NewNewColNum-NewNewRowNum, EvenNewerBoard).
 
 % movement
 play(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
