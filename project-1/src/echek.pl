@@ -35,6 +35,7 @@ startGame(4):-
 
 startGame(0).
 
+
 gameLoop(Board, Player1, Player2):-
     whitePlayerTurn(Board, Player1, NewBoard),
     (
@@ -48,7 +49,7 @@ gameLoop(Board, Player1, Player2):-
     ).
 
 % placement
-play(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
+move(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
     getPossiblePlaces(Board, Piece-Color, PossibleMoves),
     (
         % either move is valid
@@ -63,29 +64,27 @@ play(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
             write('ERROR: Invalid move'), nl,
             readGameInput(Board, NewPiece, NewNewColNum-NewNewRowNum),
             getCellCoords(Board, NewOldColNum-NewOldRowNum, NewPiece-Color),
-            play(Board, NewPiece-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
+            move(Board, NewPiece-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
         )
     ).
 
 % placing pawn gives you an extra move
 
 % movement
-play(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
+move(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
     getPossibleMoves(Board, Piece-Color, PossibleMoves),
     (
         % either move is valid
         (
-            trace,
             member(NewColNum-NewRowNum, PossibleMoves),
             movePiece(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
-            notrace
         );
         % or try again
         (
             write('ERROR: Invalid move'), nl,
             readGameInput(Board, NewPiece, NewNewColNum-NewNewRowNum),
             getCellCoords(Board, NewOldColNum-NewOldRowNum, NewPiece-Color),
-            play(Board, NewPiece-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
+            move(Board, NewPiece-Color, NewOldColNum-NewOldRowNum, NewNewColNum-NewNewRowNum, NewBoard)
         )
     ).
 
@@ -93,25 +92,28 @@ whitePlayerTurn(Board, player, NewBoard):-
     nl, write('-------- PLAYER WHITE --------'), nl, nl,
     readGameInput(Board, Piece, NewColNum-NewRowNum),
     getCellCoords(Board, OldColNum-OldRowNum, Piece-white),
-    play(Board, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
+    move(Board, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
     printBoard(NewBoard).
 
 whitePlayerTurn(Board, computer, NewBoard):-
     nl, write('-------- COMPUTER WHITE --------'), nl, nl,
-    makeRandomPlay(Board, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum),
-    play(Board, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
+    choose_move(Board, 0, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum),
+    move(Board, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
+    printBoard(NewBoard).
 
 blackPlayerTurn(Board, player, NewBoard):-
     nl, write('-------- PLAYER BLACK --------'), nl, nl,
     readGameInput(Board, Piece, NewColNum-NewRowNum),
     getCellCoords(Board, OldColNum-OldRowNum, Piece-black),
-    play(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
+    move(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
     printBoard(NewBoard).
 
 blackPlayerTurn(Board, computer, NewBoard):-
     nl, write('-------- COMPUTER BLACK --------'), nl, nl,
-    makeRandomPlay(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum),
-    play(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
+    choose_move(Board, 0, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum),
+    move(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
+    printBoard(NewBoard).
+
 
 /*
 test:-

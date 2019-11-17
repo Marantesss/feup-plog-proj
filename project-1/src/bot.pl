@@ -3,21 +3,22 @@
 
 pieceList([king, queen, bishop, horse, tower, pawn]).
 
-% ---- random AI ---- %
+% ---- Level 0 - Random AI ---- %
+% ---- Level 1 - Choose closest to the opposite king ---- %
 
-makeRandomPlay(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    pickRandomPiece(Board, Piece-Color, OldColNum-OldRowNum),
-    pickRandomMove(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
+choose_move(Board, Level, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    pickPiece(Board, Level, Piece-Color, OldColNum-OldRowNum),
+    pickMove(Board, Level, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
-pickRandomPiece(Board, Piece-Color, OldColNum-OldRowNum):-
+pickPiece(Board, 0, Piece-Color, OldColNum-OldRowNum):-
     pieceList(PieceList),
     random_member(Piece, PieceList),
     getCellCoords(Board, OldColNum-OldRowNum, Piece-Color).
 
-pickRandomMove(Board, Piece-Color, 0-0, NewColNum-NewRowNum):-
+pickMove(Board, 0, Piece-Color, 0-0, NewColNum-NewRowNum):-
     getPossiblePlaces(Board, Piece-Color, PossibleMoves),
     random_member(NewColNum-NewRowNum, PossibleMoves).
     
-pickRandomMove(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+pickMove(Board, 0, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getPossibleMoves(Board, Piece-Color, PossibleMoves),
     random_member(NewColNum-NewRowNum, PossibleMoves).
