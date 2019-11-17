@@ -40,142 +40,91 @@ checkBorderCols(Board, Board).
 %---------------------------------------------------%
 
 % ---- TOP ---- %
+checkTopRow(Board):-
+    !,
+    isEmptyRow(Board, 1),
+    !,
+    isEmptyRow(Board, 2).
 
 % remove
 checkTop(Board, TopBoard):-
-    isEmptyRow(Board, 2),
-    !,
+    checkTopRow(Board),
     removeTopRow(Board, TopBoard).
 
 % add
 checkTop(Board, TopBoard):-
     \+isEmptyRow(Board, 1),
-    !,
     addTopRow(Board, TopBoard).
 
 % do nothing
 checkTop(Board, Board).
 
 % ---- BOT ---- %
+checkBotRow(Board):-
+    length(Board, RowNum),
+    ActRowNum is RowNum - 1,
+    !,
+    isEmptyRow(Board, RowNum),
+    !,
+    isEmptyRow(Board, ActRowNum).
 
 % remove
 checkBot(Board, BotBoard):-
-    length(Board, RowNum),
-    ActRowNum is RowNum - 1,
-    isEmptyRow(Board, ActRowNum),
-    !,
+    checkBotRow(Board),
     removeBottomRow(Board, BotBoard).
 
 % add
 checkBot(Board, BotBoard):-
     length(Board, RowNum),
     \+isEmptyRow(Board, RowNum),
-    !,
     addBottomRow(Board, BotBoard).
 
 % do nothing
 checkBot(Board, Board).
 
 % ---- LEFT ---- %
+checkLeftColumns(Board):-
+    !,
+    isEmptyColumn(Board, 1),
+    !,
+    isEmptyColumn(Board, 2).
 
 % remove
 checkLeft(Board, LeftBoard):-
-    isEmptyColumn(Board, 2),
-    !,
+    checkLeftColumns(Board),
     removeLeftColumn(Board, LeftBoard).
 
 % add
 checkLeft(Board, LeftBoard):-
     \+isEmptyColumn(Board, 1),
-    !,
     addLeftColumn(Board, LeftBoard).
 
 % do nothing
 checkLeft(Board, Board).
 
 % ---- RIGHT ---- %
-
-% remove
-checkRight([Row | Board], RightBoard):-
+checkRightColumns(Board):-
+    nth1(1, Board, Row),
     length(Row, ColNum),
     ActColNum is ColNum - 1,
-    isEmptyColumn([Row | Board], ActColNum),
     !,
-    removeRightColumn([Row | Board], RightBoard).
+    isEmptyColumn(Board, ColNum),
+    !,
+    isEmptyColumn(Board, ActColNum).
+
+% remove
+checkRight(Board, RightBoard):-
+    checkRightColumns(Board),
+    removeRightColumn(Board, RightBoard).
 
 % add
 checkRight([Row | Board], RightBoard):-
     length(Row, ColNum),
     \+isEmptyColumn([Row | Board], ColNum),
-    !,
     addRightColumn([Row | Board], RightBoard).
 
 % do nothing
 checkRight(Board, Board).
-
-%---------------------------------------------------%
-%----------------- Aux Predicados ------------------%
-%---------------------------------------------------%
-
-% ---- gets cell coordinates when cell is known.
-
-% ---- piece is not on the board
-getCellRow([], ReturnRow, Cell):-
-    ReturnRow = [].
-% ---- piece is in board
-getCellRow([Row | _], ReturnRow, Cell):-
-    member(Cell, Row),
-    ReturnRow = Row.
-
-getCellRow([Row | Board], ReturnRow, Cell):-
-    getCellRow(Board, ReturnRow, Cell).
-
-getCellCoords(Board, ColNum-RowNum, Cell):-
-    getCellRow(Board, Row, Cell),
-    nth1(RowNum, Board, Row), % get row number
-    nth1(ColNum, Row, Cell). % get column number
-% ---- piece is not on the board
-getCellCoords(Board, 0-0, Cell).
-
-% ---- gets cell when cell coordinates are known.
-
-getCell(Board, ColNum-RowNum, Cell):-
-    nth1(RowNum, Board, Row), % get row
-    nth1(ColNum, Row, Cell). % get cell
-
-replaceCell(Board, NewCell, ColNum-RowNum, NewBoard):-
-    nth1(RowNum, Board, Row), % get row
-    replace(Row, ColNum, NewCell, NewRow), % replace cell in row
-    replace(Board, RowNum, NewRow, NewBoard). % replace row in board
-
-replace([_ | Tail], 1, Rep, [Rep | Tail]).
-replace([Head | Tail], Index, Rep, [Head | Rest]):-
-    Index > 1,
-    PrevIndex is Index - 1,
-    replace(Tail, PrevIndex, Rep, Rest).
-
-% ---- Empty Conditions ---- %
-
-isEmptyCell(empty-empty).
-
-isEmptyCellCoords(Board, ColNum-RowNum):-
-    getCell(Board, ColNum-RowNum, Cell),
-    isEmptyCell(Cell).
-
-isEmptyRowAux([]).
-isEmptyRowAux([Cell | Row]):-
-    isEmptyCell(Cell),
-    isEmptyRowAux(Row).
-
-isEmptyRow(Board, RowNum):-
-    nth1(RowNum, Board, Row),
-    isEmptyRowAux(Row).
-
-isEmptyColumn([], ColNum).
-isEmptyColumn([Row | Board], ColNum):-
-    nth1(ColNum, Row, Cell),
-    isEmptyCell(Cell),
-    isEmptyColumn(Board, ColNum).
 
 % ---- Add Rows, Cols and Cells ----%
 
@@ -219,23 +168,13 @@ removeBottomRowAux([X1|Xs], [X0|Ys], X0) :-
     removeBottomRowAux(Xs, Ys, X1).
 
 
-removeLeftColumn(OldBoard, NewBoard):-
-    length(OldBoard, ColNumber),
-    removeLeftColumnAux(OldBoard, NewBoard, ColNumber).
-
-removeLeftColumnAux(_, _, 0).
-removeLeftColumnAux([Row | Board], [NewRow | NewBoard], N):-
+removeLeftColumn([], []).
+removeLeftColumn([Row | Board], [NewRow | NewBoard]):-
     removeTopRow(Row, NewRow),      % removes left cell in row
-    N1 is N-1,
-    removeLeftColumnAux(Board, NewBoard, N1).
+    removeLeftColumn(Board, NewBoard).
 
 
-removeRightColumn(OldBoard, NewBoard):-
-    length(OldBoard, ColNumber),
-    removeRightColumnAux(OldBoard, NewBoard, ColNumber).
-
-removeRightColumnAux(_, _, 0).
-removeRightColumnAux([Row | Board], [NewRow | NewBoard], N):-
+removeRightColumn([], []).
+removeRightColumn([Row | Board], [NewRow | NewBoard]):-
     removeBottomRow(Row, NewRow),      % removes right cell in row
-    N1 is N-1,
-    removeRightColumnAux(Board, NewBoard, N1).
+    removeRightColumn(Board, NewBoard).
