@@ -19,10 +19,10 @@ play(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
     (
         % either move is valid
         (
-            trace,
+            %trace,
             member(NewColNum-NewRowNum, PossibleMoves),
-            placePiece(Board, Piece-Color, NewColNum-NewRowNum, NewBoard),
-            notrace
+            placePiece(Board, Piece-Color, NewColNum-NewRowNum, NewBoard)
+            %notrace
         );
         % or try again
         (
@@ -44,7 +44,7 @@ play(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
             trace,
             member(NewColNum-NewRowNum, PossibleMoves),
             movePiece(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
-            notrace,
+            notrace
         );
         % or try again
         (

@@ -18,9 +18,10 @@ canPlace(Board, ColNum-RowNum, Piece-Color):-
 canMove(Board, NewColNum-NewRowNum, Piece-Color):-
     isInsideBoard(Board, NewColNum-NewRowNum), % check if NewColNum-NewRowNum are inside the board
     getCellCoords(Board, OldColNum-OldRowNum, Piece-Color),
+    !,
     isEmptyCellCoords(Board, NewColNum-NewRowNum), % check if coord is empty
+    !,
     canPieceMove(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum), % checks if NewCoords are achievable from OldCoords
-    % detect if there are enemies in path
     replaceCell(Board, empty-empty, OldColNum-OldRowNum, EmptyBoard), % replace old cell with empty
     replaceCell(EmptyBoard, Piece-Color, NewColNum-NewRowNum, NewBoard), % put piece in new cell
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
@@ -40,7 +41,9 @@ validKingTranslation(1, 1).
 canPieceMove(Board, king-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validKingTranslation(DistX, DistY); validKingTranslation(DistX, DistY)).
+    (validKingTranslation(DistX, DistY); validKingTranslation(DistX, DistY)),
+    \+enemiesInPath(Board, king-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
+
 
 % horse can move in L's
 validHorseTranslation(2, 1).
@@ -54,30 +57,34 @@ validPawnTranslation(1, 0).
 canPieceMove(Board, pawn-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validPawnTranslation(DistX, DistY); validPawnTranslation(DistX, DistY)).
+    (validPawnTranslation(DistX, DistY); validPawnTranslation(DistY, DistX)),
+    \+enemiesInPath(Board, pawn-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 % queen can move like bishop + tower
 canPieceMove(Board, queen-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
     (
-        validTowerTranslation(DistX, DistY); validTowerTranslation(DistX, DistY); % tower-like translation
-        validBishopTranslation(DistX, DistY); validBishopTranslation(DistX, DistY)  % bishop-like translation
-    ).
+        validTowerTranslation(DistX, DistY); validTowerTranslation(DistY, DistX); % tower-like translation
+        validBishopTranslation(DistX, DistY); validBishopTranslation(DistY, DistX)  % bishop-like translation
+    ),
+    \+enemiesInPath(Board, queen-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 % bishop can diagonaly an arbitrary number of cells
 validBishopTranslation(X, X).
 canPieceMove(Board, bishop-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validBishopTranslation(DistX, DistY); validBishopTranslation(DistX, DistY)).
+    (validBishopTranslation(DistX, DistY); validBishopTranslation(DistY, DistX)),
+    \+enemiesInPath(Board, queen-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 % tower can move up, down, left or right an arbitrary number of cells
 validTowerTranslation(0, X).
 canPieceMove(Board, tower-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     DistX is abs(OldColNum - NewColNum),
     DistY is abs(OldRowNum - NewRowNum),
-    (validTowerTranslation(DistX, DistY); validTowerTranslation(DistX, DistY)).
+    (validTowerTranslation(DistX, DistY); validTowerTranslation(DistY, DistX)),
+    \+enemiesInPath(Board, queen-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 % ---- Aux Functions ---- %
 
@@ -141,7 +148,8 @@ isValidBoard([Row | Board]):-
     length(Row, ColNum), ActualColNum is ColNum - 1,
     isValidBoardCols([Row | Board], ActualColNum),
     % check board size
-    RowNum < 7, ColNum < 7.
+    between(1, 6, RowNum),
+    between(1, 6, ColNum).
 
 isValidBoardCols(_, 1).
 isValidBoardCols(Board, ColNum):-
@@ -155,7 +163,6 @@ isValidBoardRows(Board, RowNum):-
     NextRowNum is RowNum - 1,
     isValidBoardRows(Board, NextRowNum).
 
-
 getDeltaX(OldX, NewX, 0):-
     NewX =:= OldX.
 getDeltaX(OldX, NewX, 1):-
@@ -164,66 +171,81 @@ getDeltaX(OldX, NewX, -1):-
     NewX < OldX.
 
 getDeltaY(OldY, NewY, 0):-
-    NewX =:= OldX.
+    NewY =:= OldY.
 getDeltaY(OldY, NewY, 1):-
-    NewX < OldX.
+    NewY > OldY.
 getDeltaY(OldY, NewY, -1):-
-    NewX > OldX.
+    NewY < OldY.
 
 % horse can go through all pieces
-enemiesInPath(Board, horse-Color, OldColNum-OldRowNum, NewColNum-NewRowNum).
+enemiesInPath(Board, horse-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
+    fail.
 
 enemiesInPath(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getDeltaX(OldColNum, NewColNum, DeltaX),
     getDeltaY(OldRowNum, NewRowNum, DeltaY),
-    \+noEnemiesInPathAux(Board, Color, DeltaX-DeltaY, OldColNum-OldRowNum, NewColNum-NewRowNum).
+    !,
+    enemiesInPathAux(Board, Color, DeltaX-DeltaY, OldColNum-OldRowNum, NewColNum-NewRowNum).
 
 % check down
 enemiesInPathAux(Board, Color, 0-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getCol(Board, OldColNum, Col),
     splitList(Col, Path, OldRowNum, NewRowNum),
-    member(_-black, Path).
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % check up
 enemiesInPathAux(Board, Color, 0- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getCol(Board, OldColNum, Col),
     splitList(Col, Path, NewRowNum, OldRowNum),
-    member(_-black, Path).
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % check right
 enemiesInPathAux(Board, Color, 1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getRow(Board, OldRowNum, Row),
     splitList(Row, Path, OldColNum, NewColNum),
-    member(_-black, Path).
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % check left
 enemiesInPathAux(Board, Color, -1-0, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    write('Cona'),nl,
     getRow(Board, OldRowNum, Row),
     splitList(Row, Path, NewColNum, OldColNum),
-    member(_-black, Path).
-
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % check left-up
 enemiesInPathAux(Board, Color, -1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getDiagonalLeft(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Path),
-    member(_-black, Path).
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % check left-down
 enemiesInPathAux(Board, Color, 1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getDiagonalLeft(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Path),
-    member(_-black, Path).
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % check right-up
 enemiesInPathAux(Board, Color, 1- -1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getDiagonalRight(Board, OldColNum-OldRowNum, NewColNum-NewRowNum, Path),
-    member(_-black, Path).
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % check right-down
 enemiesInPathAux(Board, Color, -1-1, OldColNum-OldRowNum, NewColNum-NewRowNum):-
     getDiagonalRight(Board, NewColNum-NewRowNum, OldColNum-OldRowNum, Path),
-    member(_-black, Path).
-
+    getOpposingColor(Color, OpposingColor),
+    !,
+    member(_-OpposingColor, Path).
 
 % ---- King and opposing colors Conditions ---- %
 
