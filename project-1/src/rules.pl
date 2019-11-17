@@ -6,13 +6,16 @@
 
 canPlace(Board, ColNum-RowNum, Piece-Color):-
     isInsideBoard(Board, ColNum-RowNum), % check if ColNum-RowNum are inside the board
+    !,
     isEmptyCellCoords(Board, ColNum-RowNum), % check if coord is empty
     replaceCell(Board, Piece-Color, ColNum-RowNum, NewBoard), % put piece in cell
     rearrangeBoard(NewBoard, ArrangedBoard), % rearrange board
     getCellCoords(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Piece-Color),
-    \+notAdjacent(ArrangedBoard, ArrangedColNum-ArrangedRowNum), % check if coord has any adjacent pieces
+    !,
     notAdjacentOpposingKing(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Color),   % check if coord is adjacent to the Opposing king
+    !,
     \+notAdjacentSameColorPiece(ArrangedBoard, ArrangedColNum-ArrangedRowNum, Color), % check if coord has any adjacent SAME COLOR pieces
+    !,
     isValidBoard(ArrangedBoard).
 
 canMove(Board, NewColNum-NewRowNum, Piece-Color):-
@@ -261,6 +264,15 @@ notSameColorPieceCellCoords(Board, ColNum-RowNum, PlayingColor):-
     PlayingColor \== Color.
 
 % ---- check if king or queen are trapped ---- %
+isKingTrapped(Board, Color):-
+    getPlayableBoard(Board, PlayableBoard),
+    getCellCoords(PlayableBoard, ColNum-RowNum, king-Color),
+    isTrapped(PlayableBoard, ColNum-RowNum).
+
+isQueenTrapped(Board, Color):-
+    getPlayableBoard(Board, PlayableBoard),
+    getCellCoords(PlayableBoard, ColNum-RowNum, queen-Color),
+    isTrapped(PlayableBoard, ColNum-RowNum).
 
 % caso geral
 isTrapped([Row | Board], ColNum-RowNum):-
