@@ -18,7 +18,7 @@ getPossiblePlaces([Row | Board], Piece-Color, PossiblePlaces):-
         between(1, MaxRowNumber, RowNum),
         canPlace([Row | Board], ColNum-RowNum, Piece-Color)
     ),
-    setof(ColNum-RowNum, Goal, PossibleMoves).
+    setof(ColNum-RowNum, Goal, PossiblePlaces).
 
 getPossibleMoves([Row | Board], Piece-Color, PossibleMoves):-
     length(Row, MaxColNumber),
@@ -31,7 +31,7 @@ getPossibleMoves([Row | Board], Piece-Color, PossibleMoves):-
     ),
     setof(ColNum-RowNum, Goal, PossibleMoves).
  
-/*
+
 testPlace:-
     getPossiblePlaces([
         [empty-empty, empty-empty, empty-empty, empty-empty],
@@ -41,7 +41,7 @@ testPlace:-
         [empty-empty, empty-empty, empty-empty, empty-empty]
     ], tower-black, PM),
     write(PM).
-*/
+
 
 testMove:-
     getPossibleMoves([
