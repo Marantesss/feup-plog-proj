@@ -9,7 +9,7 @@ placePiece(Board, Piece-Color, ColNum-RowNum, NewBoard):-
     replaceCell(Board, Piece-Color, ColNum-RowNum, RepBoard), % place piece
     rearrangeBoard(RepBoard, NewBoard). % rearrange board
 
-getPossiblePlaces([Row | Board], Piece-Color, PossiblePlaces):-
+valid_places([Row | Board], Piece-Color, PossiblePlaces):-
     length(Row, MaxColNumber),
     length([Row | Board], MaxRowNumber),
     Goal =
@@ -20,7 +20,7 @@ getPossiblePlaces([Row | Board], Piece-Color, PossiblePlaces):-
     ),
     setof(ColNum-RowNum, Goal, PossiblePlaces).
 
-getPossibleMoves([Row | Board], Piece-Color, PossibleMoves):-
+valid_moves([Row | Board], Piece-Color, PossibleMoves):-
     length(Row, MaxColNumber),
     length([Row | Board], MaxRowNumber),
     Goal =
@@ -33,7 +33,7 @@ getPossibleMoves([Row | Board], Piece-Color, PossibleMoves):-
  
 
 testPlace:-
-    getPossiblePlaces([
+    valid_places([
         [empty-empty, empty-empty, empty-empty, empty-empty],
         [empty-empty, empty-empty, king-black, empty-empty],
         [empty-empty, empty-empty, king-white, empty-empty],
@@ -44,7 +44,7 @@ testPlace:-
 
 
 testMove:-
-    getPossibleMoves([
+    valid_moves([
         [empty-empty, empty-empty, empty-empty, empty-empty],
         [empty-empty, empty-empty, king-black, empty-empty],
         [empty-empty, empty-empty, king-white, empty-empty],
