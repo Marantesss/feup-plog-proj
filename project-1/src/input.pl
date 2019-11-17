@@ -78,51 +78,62 @@ validateOption(_Other) :-
 
 readPiece(Piece):-
     write('> Piece Name: '),
-    read(Piece),
-    validatePiece(Piece).
-
-validatePiece(pawn).
-validatePiece(king).
-validatePiece(queen).
-validatePiece(horse).
-validatePiece(bishop).
-validatePiece(tower).
-validatePiece(Piece):-
-    write('ERROR: Please enter Piece name again.'), nl,
-    readPiece(Piece). % Reads piece again when user input fails
-
-
+    read(ReadPiece),
+    (
+        % piece is valid
+        (
+            validPiece(ReadPiece),
+            Piece = ReadPiece
+        );
+        % or try again
+        (
+            write('ERROR: Please enter Piece name again.'), nl,
+            readPiece(Piece)  
+        )
+    ).
 
 % --- Columns --- %
 
 readCol(Board, ColNum):-
     write('> Column Number: '),
-    read(ColNum),
-    validateColNum(Board, ColNum).
+    read(ReadColNum),
+    (
+        % col is valid
+        (
+            validateColNum(Board, ReadColNum),
+            ColNum = ReadColNum
+        );
+        % or try again
+        (
+            write('ERROR: Please enter Column number again.'), nl,
+            readCol(Board, ColNum)
+        )
+    ).
 
 validateColNum([Row | Board], ColNum):-
-    ColNum > 0,
     length(Row, RowLenght),
-    ColNum =< RowLenght.
-
-validateColNum(Board, ColNum):-
-    write('ERROR: Please enter Column number again.'), nl,
-    readCol(Board, ColNum). % Reads col again when user input fails
+    between(1, RowLenght, ColNum).
 
 % --- Rows --- %
 
 readRow(Board, RowNum):-
     write('> Row letter: '),
     read(RowLet),
-    validateRowNum(Board, RowLet, RowNum).
+    (
+        % row is valid
+        (
+            validateRowNum(Board, RowLet, ReadRowNum),
+            RowNum = ReadRowNum
+        );
+        % or try again
+        (
+            write('ERROR: Please enter Row letter again.'), nl,
+            readRow(Board, RowNum)
+        )
+    ).
 
 validateRowNum(Board, RowLet, RowNum):-
     letter(RowNum, RowLet),
-    RowNum > 0,
     length(Board, ColLenght),
-    RowNum =< ColLenght.
-
-validateRowNum(Board, RowLet, RowNum):-
-    write('ERROR: Please enter Row letter again.'), nl,
-    readRow(Board, RowNum). % Reads row again when user input fails
+    between(1, ColLenght, RowNum).
     

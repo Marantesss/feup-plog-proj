@@ -10,6 +10,13 @@ translate(horse, 'h').
 translate(pawn, 'p').
 translate(empty, '.').
 
+validPiece(pawn).
+validPiece(king).
+validPiece(queen).
+validPiece(horse).
+validPiece(bishop).
+validPiece(tower).
+
 % Color
 translate(black, 'B').
 translate(white, 'W').

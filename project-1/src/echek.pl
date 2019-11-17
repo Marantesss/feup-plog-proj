@@ -3,6 +3,7 @@
 :-consult('pieces.pl').
 :-consult('rules.pl').
 :-consult('input.pl').
+:-consult('bot.pl').
 
 echek:-
     menu,
@@ -40,8 +41,10 @@ play(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
     (
         % either move is valid
         (
+            trace,
             member(NewColNum-NewRowNum, PossibleMoves),
             movePiece(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard),
+            notrace,
         );
         % or try again
         (
@@ -60,8 +63,9 @@ whitePlayerTurn(Board, person, NewBoard):-
     printBoard(NewBoard).
 
 whitePlayerTurn(Board, computer, NewBoard):-
-    nl, write('-------- COMPUTER WHITE --------'), nl, nl.
-    % bot play
+    nl, write('-------- COMPUTER WHITE --------'), nl, nl,
+    makeRandomPlay(Board, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum),
+    play(Board, Piece-white, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
 
 blackPlayerTurn(Board, person, NewBoard):-
     nl, write('-------- PLAYER BLACK --------'), nl, nl,
@@ -71,8 +75,10 @@ blackPlayerTurn(Board, person, NewBoard):-
     printBoard(NewBoard).
 
 blackPlayerTurn(Board, computer, NewBoard):-
-    nl, write('-------- COMPUTER BLACK --------'), nl, nl.
-    % bot play
+    nl, write('-------- COMPUTER BLACK --------'), nl, nl,
+    makeRandomPlay(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum),
+    play(Board, Piece-black, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard).
+
 
 startGame(Player1, Player2):-
     initialBoard(InitBoard),
