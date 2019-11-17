@@ -1,4 +1,3 @@
-:-use_module(library(lists)).
 :-consult('utils.pl').
 
 %---------------------------------------------------%
@@ -7,180 +6,142 @@
 %---------------------------------------------------%
 
 rearrangeBoard(Board, NewBoard):-
-    cleanBoardRemove(Board, RemoveBoard),
-    cleanBoardAdd(RemoveBoard, NewBoard).
-
-rearrangeBoard(Board, NewBoard):-
-    cleanBoardRemove(Board, RemoveBoard).
-
-rearrangeBoard(Board, NewBoard):-
-    cleanBoardAdd(Board, NewBoard).
+    checkTop(Board, TopBoard), % add or remove top row
+    checkBot(TopBoard, BotBoard), % add or remove bot row
+    checkLeft(BotBoard, LeftBoard), % add or remove left row
+    checkRight(LeftBoard, NewBoard). % add or remove right row
 
 %---------------------------------------------------%
-%--------------- REMOVE WHEN EMPTY  ----------------%
+%----- REMOVE WHEN EMPTY / ADD WHEN NOT EMPTY ------%
 %---------------------------------------------------%
 
-% TOP, BOT, LEFT and RIGHT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
-    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, BotBoard), % remove bottom row
-    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, [Row | LeftBoard]), % remove left column
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+% ---- TOP ---- %
 
-% TOP, BOT and LEFT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
-    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, BotBoard), % remove bottom row
-    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, NewBoard). % remove left column
+% remove
+checkTop(Board, TopBoard):-
+    isEmptyRow(Board, 2),
+    !,
+    removeTopRow(Board, TopBoard).
 
-% TOP, BOT and RIGHT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
-    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, [Row | BotBoard]), % remove bottom row
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | BotBoard], ActColNum), removeRightColumn([Row | BotBoard], NewBoard). % remove right column
+% add
+checkTop(Board, TopBoard):-
+    \+isEmptyRow(Board, 1),
+    !,
+    addTopRow(Board, TopBoard).
 
-% BOT, LEFT and RIGHT
-cleanBoardRemove(Board, NewBoard):-
-    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, BotBoard), % remove bottom row
-    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, [Row | LeftBoard]), % remove left column
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+% do nothing
+checkTop(Board, Board).
 
-% TOP, LEFT and RIGHT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
-    isEmptyColumn(TopBoard, 2), removeLeftColumn(TopBoard, [Row | LeftBoard]), % remove left column
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+% ---- BOT ---- %
 
-% TOP and BOT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
-    length(TopBoard, RowNum), ActRowNum is RowNum - 1, isEmptyRow(TopBoard, ActRowNum), removeBottomRow(TopBoard, NewBoard). % remove bottom row
+% remove
+checkBot(Board, BotBoard):-
+    length(Board, RowNum),
+    ActRowNum is RowNum - 1,
+    isEmptyRow(Board, ActRowNum),
+    !,
+    removeBottomRow(Board, BotBoard).
 
-% TOP and LEFT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, TopBoard), % remove top row
-    isEmptyColumn(TopBoard, 2), removeLeftColumn(TopBoard, NewBoard). % remove left column
+% add
+checkBot(Board, BotBoard):-
+    length(Board, RowNum),
+    \+isEmptyRow(Board, RowNum),
+    !,
+    addBottomRow(Board, BotBoard).
 
-% TOP and RIGHT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, [Row | TopBoard]), % remove top row
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | TopBoard], ActColNum), removeRightColumn([Row | TopBoard], NewBoard). % remove right column
+% do nothing
+checkBot(Board, Board).
 
-% BOT and LEFT
-cleanBoardRemove(Board, NewBoard):-
-    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, BotBoard), % remove bottom row
-    isEmptyColumn(BotBoard, 2), removeLeftColumn(BotBoard, NewBoard). % remove left column
+% ---- LEFT ---- %
 
-% BOT and RIGHT
-cleanBoardRemove(Board, NewBoard):-
-    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, [Row | BotBoard]), % remove bottom row
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | BotBoard], ActColNum), removeRightColumn([Row | BotBoard], NewBoard). % remove right column
+% remove
+checkLeft(Board, LeftBoard):-
+    isEmptyColumn(Board, 2),
+    !,
+    removeLeftColumn(Board, LeftBoard).
 
-% LEFT and RIGHT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyColumn(Board, 2), removeLeftColumn(Board, [Row | LeftBoard]), % remove left column
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | LeftBoard], ActColNum), removeRightColumn([Row | LeftBoard], NewBoard). % remove right column
+% add
+checkLeft(Board, LeftBoard):-
+    \+isEmptyColumn(Board, 1),
+    !,
+    addLeftColumn(Board, LeftBoard).
 
-% TOP
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyRow(Board, 2), removeTopRow(Board, NewBoard). % remove top row
+% do nothing
+checkLeft(Board, Board).
 
-% BOT
-cleanBoardRemove(Board, NewBoard):-
-    length(Board, RowNum), ActRowNum is RowNum - 1, isEmptyRow(Board, ActRowNum), removeBottomRow(Board, NewBoard). % remove bottom row
+% ---- RIGHT ---- %
 
-% LEFT
-cleanBoardRemove(Board, NewBoard):-
-    isEmptyColumn(Board, 2), removeLeftColumn(Board, NewBoard). % remove left column
+% remove
+checkRight([Row | Board], RightBoard):-
+    length(Row, ColNum),
+    ActColNum is ColNum - 1,
+    isEmptyColumn([Row | Board], ActColNum),
+    !,
+    removeRightColumn([Row | Board], RightBoard).
 
-% RIGHT
-cleanBoardRemove([Row | Board], NewBoard):-
-    length(Row, ColNum), ActColNum is ColNum - 1, isEmptyColumn([Row | Board], ActColNum), removeRightColumn([Row | Board], NewBoard). % remove right column
+% add
+checkRight([Row | Board], RightBoard):-
+    length(Row, ColNum),
+    \+isEmptyColumn([Row | Board], ColNum),
+    !,
+    addRightColumn([Row | Board], RightBoard).
 
+% do nothing
+checkRight(Board, Board).
 
 %---------------------------------------------------%
-%--------------- ADD WHEN NOT EMPTY  ---------------%
+%----------------- Aux Predicados ------------------%
 %---------------------------------------------------%
 
-% TOP, BOT, LEFT and RIGHT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, TopBoard), % add top row
-    length(TopBoard, RowNum), \+isEmptyRow(TopBoard, RowNum), addBottomRow(TopBoard, BotBoard), % add bottom row
-    \+isEmptyColumn(BotBoard, 1), addLeftColumn(BotBoard, [Row | LeftBoard]), % add left column
-    length(Row, ColNum), \+isEmptyColumn([Row | LeftBoard], ColNum), addRightColumn([Row | LeftBoard], NewBoard). % add right column
+getCol([], _, []).
+getCol([Row | Board], N, [Piece-Color | Col]):-
+    nth1(N, Row, Piece-Color),
+    getCol(Board, N, Col).
 
-% TOP, BOT and LEFT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, TopBoard), % add top row
-    length(TopBoard, RowNum), \+isEmptyRow(TopBoard, RowNum), addBottomRow(TopBoard, BotBoard), % add bottom row
-    \+isEmptyColumn(BotBoard, 1), addLeftColumn(BotBoard, NewBoard). % add left column
+getRow(Board, N, Col):-
+    nth1(N, Board, Col).
 
-% TOP, BOT and RIGHT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, TopBoard), % add top row
-    length(TopBoard, RowNum), \+isEmptyRow(TopBoard, RowNum), addBottomRow(TopBoard, [Row | BotBoard]), % add bottom row
-    length(Row, ColNum), \+isEmptyColumn([Row | BotBoard], ColNum), addRightColumn([Row | BotBoard], NewBoard). % add right column
+% ---- get diagonal /> ----
+getDiagonalRight(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, []):-
+    StartColNum > EndColNum.
 
-% BOT, LEFT and RIGHT
-cleanBoardAdd(Board, NewBoard):-
-    length(Board, RowNum), \+isEmptyRow(Board, RowNum), addBottomRow(Board, BotBoard), % add bottom row
-    \+isEmptyColumn(BotBoard, 1), addLeftColumn(BotBoard, [Row | LeftBoard]), % add left column
-    length(Row, ColNum), \+isEmptyColumn([Row | LeftBoard], ColNum), addRightColumn([Row | LeftBoard], NewBoard). % add right column
+getDiagonalRight(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, [Piece-Color | Diagonal]):-
+    NextCol is StartColNum + 1,
+    NextRow is StartRowNum - 1,
+    getDiagonalRight(Board, NextCol-NextRow, EndColNum-EndRowNum, Diagonal),
+    getCell(Board, StartColNum-StartRowNum, Piece-Color).
 
-% TOP, LEFT and RIGHT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, TopBoard), % add top row
-    \+isEmptyColumn(TopBoard, 1), addLeftColumn(TopBoard, [Row | LeftBoard]), % add left column
-    length(Row, ColNum), \+isEmptyColumn([Row | LeftBoard], ColNum), addRightColumn([Row | LeftBoard], NewBoard). % add right column
+% ---- get diagonal \> ----
+getDiagonalLeft(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, []):-
+    StartColNum > EndColNum.
 
-% TOP and BOT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, TopBoard), % add top row
-    length(TopBoard, RowNum),\+isEmptyRow(TopBoard, RowNum), addBottomRow(TopBoard, NewBoard). % add bottom row
+getDiagonalLeft(Board, StartColNum-StartRowNum, EndColNum-EndRowNum, [Piece-Color | Diagonal]):-
+    NextCol is StartColNum + 1,
+    NextRow is StartRowNum + 1,
+    getDiagonalLeft(Board, NextCol-NextRow, EndColNum-EndRowNum, Diagonal),
+    getCell(Board, StartColNum-StartRowNum, Piece-Color).
 
-% TOP and LEFT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, TopBoard), % add top row
-    \+isEmptyColumn(TopBoard, 1), addLeftColumn(TopBoard, NewBoard). % add left column
+% ---- piece is not on the board
+getCellRow([], ReturnRow, Cell):-
+    ReturnRow = [].
+% ---- piece is in board
+getCellRow([Row | _], ReturnRow, Cell):-
+    member(Cell, Row),
+    ReturnRow = Row.
 
-% TOP and RIGHT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, [Row | TopBoard]), % add top row
-    length(Row, ColNum), \+isEmptyColumn([Row | TopBoard], ColNum), addRightColumn([Row | TopBoard], NewBoard). % add right column
+% ---- gets cell coordinates when cell is known.
+getCellRow([Row | Board], ReturnRow, Cell):-
+    getCellRow(Board, ReturnRow, Cell).
 
-% BOT and LEFT
-cleanBoardAdd(Board, NewBoard):-
-    length(Board, RowNum), \+isEmptyRow(Board, RowNum), addBottomRow(Board, BotBoard), % add bottom row
-    \+isEmptyColumn(BotBoard, 1), addLeftColumn(BotBoard, NewBoard). % add left column
+getCellCoords(Board, ColNum-RowNum, Cell):-
+    getCellRow(Board, Row, Cell),
+    nth1(RowNum, Board, Row), % get row number
+    nth1(ColNum, Row, Cell). % get column number
+    
+% ---- piece is not on the board
+getCellCoords(Board, 0-0, Cell).
 
-% BOT and RIGHT
-cleanBoardAdd(Board, NewBoard):-
-    length(Board, RowNum), \+isEmptyRow(Board, RowNum), addBottomRow(Board, [Row | BotBoard]), % add bottom row
-    length(Row, ColNum), \+isEmptyColumn([Row | BotBoard], ColNum), addRightColumn([Row | BotBoard], NewBoard). % add right column
-
-% LEFT and RIGHT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyColumn(Board, 1), addLeftColumn(Board, [Row | LeftBoard]), % add left column
-    length(Row, ColNum), \+isEmptyColumn([Row | LeftBoard], ColNum), addRightColumn([Row | LeftBoard], NewBoard). % add right column
-
-% TOP
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyRow(Board, 1), addTopRow(Board, NewBoard). % add top row
-
-% BOT
-cleanBoardAdd(Board, NewBoard):-
-    length(Board, RowNum), \+isEmptyRow(Board, RowNum), addBottomRow(Board, NewBoard). % add bottom row
-
-% LEFT
-cleanBoardAdd(Board, NewBoard):-
-    \+isEmptyColumn(Board, 1), addLeftColumn(Board, NewBoard). % add left column
-
-% RIGHT
-cleanBoardAdd([Row | Board], NewBoard):-
-    length(Row, ColNum), \+isEmptyColumn([Row | Board], ColNum), addRightColumn([Row | Board], NewBoard). % add right column
-
-
-% ---- Aux Functions ---- %
+% ---- gets cell when cell coordinates are known.
 
 getCell(Board, ColNum-RowNum, Cell):-
     nth1(RowNum, Board, Row), % get row
@@ -201,8 +162,8 @@ replace([Head | Tail], Index, Rep, [Head | Rest]):-
 
 isEmptyCell(empty-empty).
 
-isEmptyCellCoords(Board, ColNum-RowLet):-
-    getCell(Board, ColNum-RowLet, Cell),
+isEmptyCellCoords(Board, ColNum-RowNum):-
+    getCell(Board, ColNum-RowNum, Cell),
     isEmptyCell(Cell).
 
 isEmptyRowAux([]).
@@ -228,6 +189,7 @@ getNewRow(3, [empty-empty, empty-empty, empty-empty]).
 getNewRow(4, [empty-empty, empty-empty, empty-empty, empty-empty]).
 getNewRow(5, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
 getNewRow(6, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
+getNewRow(7, [empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty, empty-empty]).
 
 addTopRow([Row | Board], NewBoard):-
     length(Row, RowLength),
