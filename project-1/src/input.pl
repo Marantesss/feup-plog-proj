@@ -30,45 +30,27 @@ test:-
 %------------------ MENU OPTIONS -------------------%
 %---------------------------------------------------%
 
-readOption:-
+readOption(Option):-
     write('> Insert your option: '),
-    read(Input),
-    validateOption(Input).
+    read(ReadOption),
+    (
+        % option is valid
+        (
+            validateOption(ReadOption),
+            Option = ReadOption
+        );
+        % or try again
+        (
+            write('ERROR: Please enter option again.'), nl,
+            readOption(Option)  
+        )
+    ).
 
-validateOption(1) :-
-    write('Player vs Player'), nl,
-    readOption.
-    /*
-    startGame('C','C'),
-    mainMenu.
-    */
-
-validateOption(2) :-
-    write('Player vs PC'), nl,
-    readOption.
-    /*
-    startGame('C','C'),
-    mainMenu.
-    */
-
-validateOption(3) :-
-    write('PC vs PC'), nl,
-    readOption.
-    /*
-    startGame('C','C'),
-    mainMenu.
-    */
-    
-validateOption(0) :-
-    nl,
-    write('Exiting...'),
-    nl, nl.
-
-validateOption(_Other) :-
-    nl,
-    write('ERROR: that option does not exist.'),
-    nl, nl,
-    readOption.
+validateOption(1). % Player vs Player
+validateOption(2). % Player vs Computer
+validateOption(3). % Computer vs Player
+validateOption(4). % Computer vs Computer
+validateOption(0). % Exit
 
 %---------------------------------------------------%
 %---------------- PLAYER MOVEMENTS -----------------%
