@@ -16,10 +16,10 @@ pickPiece(Board, 1, Piece-Color, OldColNum-OldRowNum):-
     getCellCoords(Board, OldColNum-OldRowNum, Piece-Color).
 
 pickMove(Board, 1, Piece-Color, 0-0, NewColNum-NewRowNum):-
-    getPossiblePlaces(Board, Piece-Color, PossibleMoves),
+    valid_places(Board, Piece-Color, PossibleMoves),
     random_member(NewColNum-NewRowNum, PossibleMoves).
     
 pickMove(Board, 1, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum):-
-    getPossibleMoves(Board, Piece-Color, PossibleMoves),
+    valid_moves(Board, Piece-Color, PossibleMoves),
     random_member(NewColNum-NewRowNum, PossibleMoves).
 

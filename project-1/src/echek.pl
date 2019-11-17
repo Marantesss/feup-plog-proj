@@ -102,7 +102,7 @@ gameLoop(Board, Player1, Player2):-
 
 % placement
 move(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
-    getPossiblePlaces(Board, Piece-Color, PossibleMoves),
+    valid_places(Board, Piece-Color, PossibleMoves),
     (
         % either move is valid
         (
@@ -122,7 +122,7 @@ move(Board, Piece-Color, 0-0, NewColNum-NewRowNum, NewBoard):-
 
 % movement
 move(Board, Piece-Color, OldColNum-OldRowNum, NewColNum-NewRowNum, NewBoard):-
-    getPossibleMoves(Board, Piece-Color, PossibleMoves),
+    valid_moves(Board, Piece-Color, PossibleMoves),
     (
         % either move is valid
         (
