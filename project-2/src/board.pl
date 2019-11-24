@@ -1,0 +1,1 @@
+% generate board matrix given its size
