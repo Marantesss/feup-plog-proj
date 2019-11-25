@@ -1,12 +1,8 @@
 :- consult('utils.pl').
 
-
-% generate board row given its size
-generateRow(0, []).
-generateRow(Size, [empty | Row]):-
-    NewSize is Size - 1,
-    generateRow(NewSize, Row).
-
+%----------------------------------------%
+%----------- generate board -------------%
+%----------------------------------------%
 % generate board matrix given its size
 generateBoard(Size, Board):-
     generateBoardAux(Size, Size, Board).
@@ -17,7 +13,15 @@ generateBoardAux(Size, N, [Row | Board]):-
     NewN is N - 1,
     generateBoardAux(Size, NewN, Board).
 
-% display board
+% generate board row given its size
+generateRow(0, []).
+generateRow(Size, [empty | Row]):-
+    NewSize is Size - 1,
+    generateRow(NewSize, Row).
+
+%----------------------------------------%
+%----------- display board --------------%
+%----------------------------------------%
 printBoard([Line | Board]):-
     length(Line, Width),
     write('|'),
