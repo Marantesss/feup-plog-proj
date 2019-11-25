@@ -7,10 +7,6 @@ generateRow(Size, [empty | Row]):-
     NewSize is Size - 1,
     generateRow(NewSize, Row).
 
-test:-
-    generateBoard(6, L),
-    printBoard(L).
-
 % generate board matrix given its size
 generateBoard(Size, Board):-
     generateBoardAux(Size, Size, Board).
