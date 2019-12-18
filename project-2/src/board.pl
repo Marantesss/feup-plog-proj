@@ -4,57 +4,57 @@
 %----------- generate board -------------%
 %----------------------------------------%
 % generate board matrix given its size
-generateBoard(Size, Board):-
-    generateBoardAux(Size, Size, Board).
+generate_board(Size, Board):-
+    generate_board_aux(Size, Size, Board).
 
-generateBoardAux(_, 0, []).
-generateBoardAux(Size, N, [Row | Board]):-
-    generateRow(Size, Row),
+generate_board_aux(_, 0, []).
+generate_board_aux(Size, N, [Row | Board]):-
+    generate_row(Size, Row),
     NewN is N - 1,
-    generateBoardAux(Size, NewN, Board).
+    generate_board_aux(Size, NewN, Board).
 
 % generate board row given its size
-generateRow(0, []).
-generateRow(Size, [empty | Row]):-
+generate_row(0, []).
+generate_row(Size, [0 | Row]):-
     NewSize is Size - 1,
-    generateRow(NewSize, Row).
+    generate_row(NewSize, Row).
 
 %----------------------------------------%
 %----------- display board --------------%
 %----------------------------------------%
-printBoard([Line | Board]):-
+print_board([Line | Board]):-
     length(Line, Width),
     write('|'),
-    printHorizontalSeparator(Width),
+    print_horizontal_separator(Width),
     nl,
     length([Line | Board], Height),
-    printMatrix([Line | Board], 1, Height),
+    print_matrix([Line | Board], 1, Height),
     nl.
 
-printHorizontalSeparator(0).
-printHorizontalSeparator(N):-
+print_horizontal_separator(0).
+print_horizontal_separator(N):-
     write('---|'),
     N1 is N - 1,
-    printHorizontalSeparator(N1).
+    print_horizontal_separator(N1).
 
-printMatrix([], _, 0).
-printMatrix([Line | Board], Acc, N):-
+print_matrix([], _, 0).
+print_matrix([Line | Board], Acc, N):-
     write('| '),
-    printLine(Line),
+    print_line(Line),
     nl,
     length(Line, Length),
     N1 is N - 1,
     write('|'),
-    printHorizontalSeparator(Length),
+    print_horizontal_separator(Length),
     nl,
-    printMatrix(Board, Acc1, N1).
+    print_matrix(Board, Acc1, N1).
 
-printLine([]).
-printLine([Cell | Line]):-
-    printCell(Cell),
+print_line([]).
+print_line([Cell | Line]):-
+    print_cell(Cell),
     write(' | '),
-    printLine(Line).
+    print_line(Line).
 
-printCell(Cell):-
+print_cell(Cell):-
     translate(Cell, Char),
     write(Char).
