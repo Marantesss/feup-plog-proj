@@ -43,8 +43,19 @@ two_occurences_per_column_aux(Board, ColumnNumber):-
 
 two_occurences_per_column(Board):-
     % get number of columns in Board
-    length(Board, NumberOfColumns)
+    length(Board, NumberOfColumns),
     two_occurences_per_column_aux(Board, NumberOfColumns).
+
+board_remainder_zeros([Row | Board]):-
+    % --- everything in a row besides two 1's and two 2's are 0's ---
+    % get number of columns
+    length(Board, NumberOfColumns),
+    % get number of 0's per row (number of colums - (number of 1's + number of 2's))
+    NumberOfZeros is NumberOfColumns - 4,
+    % apply restriction
+    count_equals(0, Row, NumberOfZeros),
+    % apply restriction to next rows
+    board_remainder_zeros(Board).
 
 % ====== Distances ======
 get_distance_between_elements(List, Element, Distance):-
@@ -78,11 +89,11 @@ distance_restriction_per_column_aux(Board, ColumnNumber):-
     CloseDistance #< FarDistance,
     % apply restriction to next columns
     NextColumnNumber is ColumnNumber - 1,
-    distance_restriction_per_column_aux(Board).
+    distance_restriction_per_column_aux(Board, NextColumnNumber).
 
 distance_restriction_per_column(Board):-
     % get number of columns in Board
-    length(Board, NumberOfColumns)
+    length(Board, NumberOfColumns),
     distance_restriction_per_column_aux(Board, NumberOfColumns).
 
 % =================================================================
@@ -97,6 +108,8 @@ solve_board(Board):-
     two_occurences_per_row(Board),
     % 2 occurences of 1 (close) and 2 occurences of 2 (far) per column
     two_occurences_per_column(Board),
+    % remaining elements are all 0's (empty)
+    board_remainder_zeros(Board),
     % distance between 1's (close) is smaller than 2's (far) in each line
     distance_restriction_per_line(Board),
     % distance between 1's (close) is smaller than 2's (far) in each column
