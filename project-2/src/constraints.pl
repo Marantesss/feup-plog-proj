@@ -1,5 +1,6 @@
 :- use_module(library(clpfd)).
 :- consult('utils.pl').
+:- consult('puzzles.pl').
 
 /*
 0 -> EMPTY
@@ -23,9 +24,9 @@ apply_domain([Row | Board]):-
 two_occurences_per_row([]).
 two_occurences_per_row([Row | Board]):-
     % 2 occurences of 1 (close) per row
-    count_equals(1, Row, 2),
+    count(1, Row, #=, 2),
     % 2 occurences of 2 (far) per row
-    count_equals(2, Row, 2),
+    count(2, Row, #=, 2),
     % apply restriction to next rows
     two_occurences_per_row(Board).
 
@@ -34,11 +35,11 @@ two_occurences_per_column_aux(Board, ColumnNumber):-
     % get column
     get_column(Board, ColumnNumber, Column),
     % 2 occurences of 1 (close) per column
-    count_equals(1, Column, 2),
+    count(1, Column, #=, 2),
     % 2 occurences of 2 (far) per column
-    count_equals(2, Column, 2),
+    count(2, Column, #=, 2),
     % apply restriction to next columns
-    NextColumnNumber is ColumnNumber - 1,
+    NextColumnNumber #= ColumnNumber - 1,
     two_occurences_per_column_aux(Board, NextColumnNumber).
 
 two_occurences_per_column(Board):-
@@ -51,9 +52,9 @@ board_remainder_zeros([Row | Board]):-
     % get number of columns
     length(Board, NumberOfColumns),
     % get number of 0's per row (number of colums - (number of 1's + number of 2's))
-    NumberOfZeros is NumberOfColumns - 4,
+    NumberOfZeros #= NumberOfColumns - 4,
     % apply restriction
-    count_equals(0, Row, NumberOfZeros),
+    count(0, Row, #=, NumberOfZeros),
     % apply restriction to next rows
     board_remainder_zeros(Board).
 
@@ -65,7 +66,7 @@ get_distance_between_elements(List, Element, Distance):-
     % indexes have to be unique
     FirstIndex #\= SecondIndex,
     % calculate distance
-    Distance is SecondIndex - FirstIndex.
+    Distance #= SecondIndex - FirstIndex.
 
 distance_restriction_per_line([Row | Board]):-
     % get distance between 1's (close)
@@ -88,7 +89,7 @@ distance_restriction_per_column_aux(Board, ColumnNumber):-
     % apply MAIN restriction
     CloseDistance #< FarDistance,
     % apply restriction to next columns
-    NextColumnNumber is ColumnNumber - 1,
+    NextColumnNumber #= ColumnNumber - 1,
     distance_restriction_per_column_aux(Board, NextColumnNumber).
 
 distance_restriction_per_column(Board):-
@@ -117,3 +118,7 @@ solve_board(Board):-
     % --- LABELING ---
     labeling([], Board).
     
+test:-
+    puzzle_1(Board),
+    solve_board(Board),
+    write(Board).
