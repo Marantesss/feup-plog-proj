@@ -17,12 +17,3 @@ get_row(Board, N, Row):-
 % List indexes in which Element appears
 get_indexes(List, Element, Indexes):-
     findall(Index, nth1(Index, List, Element), Indexes).
-
-get_distance_between_elements(List, Element, Distance):-
-    % find indexes of Element in List
-    get_indexes(List, Element, Indexes),
-    % get single indexes
-    nth1(1, Indexes, FirstIndex),
-    nth1(2, Indexes, SecondIndex),
-    % calculate distance
-    Distance is SecondIndex - FirstIndex.

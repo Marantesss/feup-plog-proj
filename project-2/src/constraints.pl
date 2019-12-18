@@ -7,4 +7,100 @@
 2 -> FAR
 */
 
+% =================================================================
+% Decision Variables
+% =================================================================
+apply_domain([]).
+apply_domain([Row | Board]):-
+    % (0 - empty, 1 - close, 2 - far)
+    domain(Row, 0, 2),
+    apply_domain(Board).
 
+% =================================================================
+% Restrictions
+% =================================================================
+% ====== Occurences ======
+two_occurences_per_row([]).
+two_occurences_per_row([Row | Board]):-
+    % 2 occurences of 1 (close) per row
+    count_equals(1, Row, 2),
+    % 2 occurences of 2 (far) per row
+    count_equals(2, Row, 2),
+    % apply restriction to next rows
+    two_occurences_per_row(Board).
+
+two_occurences_per_column_aux(_, 0).
+two_occurences_per_column_aux(Board, ColumnNumber):-
+    % get column
+    get_column(Board, ColumnNumber, Column),
+    % 2 occurences of 1 (close) per column
+    count_equals(1, Column, 2),
+    % 2 occurences of 2 (far) per column
+    count_equals(2, Column, 2),
+    % apply restriction to next columns
+    NextColumnNumber is ColumnNumber - 1,
+    two_occurences_per_column_aux(Board, NextColumnNumber).
+
+two_occurences_per_column(Board):-
+    % get number of columns in Board
+    length(Board, NumberOfColumns)
+    two_occurences_per_column_aux(Board, NumberOfColumns).
+
+% ====== Distances ======
+get_distance_between_elements(List, Element, Distance):-
+    % find indexes of Element in List
+    element(FirstIndex, List, Element),
+    element(SecondIndex, List, Element),
+    % indexes have to be unique
+    FirstIndex #\= SecondIndex,
+    % calculate distance
+    Distance is SecondIndex - FirstIndex.
+
+distance_restriction_per_line([Row | Board]):-
+    % get distance between 1's (close)
+    get_distance_between_elements(Row, 1, CloseDistance),
+    % get distance between 2's (far)
+    get_distance_between_elements(Row, 2, FarDistance),
+    % apply MAIN restriction
+    CloseDistance #< FarDistance,
+    % apply restriction to next rows
+    distance_restriction_per_line(Board).
+
+distance_restriction_per_column_aux(_, 0).
+distance_restriction_per_column_aux(Board, ColumnNumber):-
+    % get column
+    get_column(Board, ColumnNumber, Column),
+    % get distance between 1's (close)
+    get_distance_between_elements(Column, 1, CloseDistance),
+    % get distance between 2's (far)
+    get_distance_between_elements(Column, 2, FarDistance),
+    % apply MAIN restriction
+    CloseDistance #< FarDistance,
+    % apply restriction to next columns
+    NextColumnNumber is ColumnNumber - 1,
+    distance_restriction_per_column_aux(Board).
+
+distance_restriction_per_column(Board):-
+    % get number of columns in Board
+    length(Board, NumberOfColumns)
+    distance_restriction_per_column_aux(Board, NumberOfColumns).
+
+% =================================================================
+% Board Solver
+% =================================================================
+solve_board(Board):-
+    % --- DECISION VARIABLES ---
+    % length is already defined by Board
+    apply_domain(Board),
+    % --- RESTRICTIONS ---
+    % 2 occurences of 1 (close) and 2 occurences of 2 (far) per row
+    two_occurences_per_row(Board),
+    % 2 occurences of 1 (close) and 2 occurences of 2 (far) per column
+    two_occurences_per_column(Board),
+    % distance between 1's (close) is smaller than 2's (far) in each line
+    distance_restriction_per_line(Board),
+    % distance between 1's (close) is smaller than 2's (far) in each column
+    distance_restriction_per_column(Board),
+    % --- LABELING ---
+    labeling([], Board).
+    
