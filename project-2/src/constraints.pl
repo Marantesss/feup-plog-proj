@@ -1,6 +1,5 @@
 :- use_module(library(clpfd)).
 :- consult('utils.pl').
-:- consult('puzzles.pl').
 
 /*
 0 -> EMPTY
@@ -97,7 +96,8 @@ solve_puzzle(Board):-
     apply_occurences_restrictrions(Board),
     apply_distance_restrictrions(Board),
     % --- LABELING ---
-    labeling([], Board).
+    append(Board, FlatBoard),
+    labeling([], FlatBoard).
 
 % =================================================================
 % Line Solver
@@ -124,5 +124,4 @@ solve_line(Line):-
     % apply MAIN restriction
     CloseDistance #< FarDistance,
     % --- LABELING ---
-    labeling([], Line),
-    write(Line), nl.
+    labeling([], Line).

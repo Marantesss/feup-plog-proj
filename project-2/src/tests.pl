@@ -1,4 +1,6 @@
 :-consult('constraints.pl').
+:-consult('puzzles.pl').
+:-consult('board.pl').
 
 % =================================================================
 % Testing Purposes
@@ -6,13 +8,15 @@
 % =================================================================
 test_line:-
     Line = [2, _, _, _, _, _],
-    solve_line(Line), fail.
+    solve_line(Line),
+    write(Line), nl,
+    fail.
 
 % test for puzzle 1
 test_puzzle_1:-
     puzzle_1(Board),
     solve_puzzle(Board),
-    write(Board).
+    print_board(Board).
 
 % test for puzzle 2
 test_puzzle_2:-
