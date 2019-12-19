@@ -89,4 +89,3 @@ solve_puzzle(Board):-
     % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),
     labeling([], FlatBoard).
-

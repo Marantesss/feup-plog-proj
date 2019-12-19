@@ -58,9 +58,9 @@ generator_occurences_restrictions_per_row([Row | Board]):-
 % =================================================================
 % Puzzle Generator
 % =================================================================
-generate_random_puzzle:-
+generate_random_puzzle(Size, RandomBoard):-
     % find all possible puzzles
-    findall(Board, generate_puzzle(6, Board), PossibleBoard),
+    findall(Board, generate_puzzle(Size, Board), PossibleBoard),
     % choose a random puzzle
     random_member(RandomBoard, PossibleBoard).
 
