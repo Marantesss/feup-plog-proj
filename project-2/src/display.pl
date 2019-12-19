@@ -9,7 +9,7 @@ print_board([Line | Board]):-
     print_horizontal_separator(Width),
     nl,
     length([Line | Board], Height),
-    print_matrix([Line | Board], 1, Height),
+    print_matrix([Line | Board], Height),
     nl.
 
 print_horizontal_separator(0).

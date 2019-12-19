@@ -1,4 +1,4 @@
-:-consult('constraints.pl').
+:-consult('solver.pl').
 :-consult('puzzles.pl').
 :-consult('board.pl').
 
