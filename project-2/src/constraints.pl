@@ -17,7 +17,6 @@ apply_domain([Row | Board]):-
     domain(Row, 0, 2),
     apply_domain(Board).
 
-
 % =================================================================
 % Restrictions
 % =================================================================
@@ -30,55 +29,54 @@ size_restrictions_per_row(Size, [Row | Board]):-
 size_restrictions(Size, Board):-
     length(Board, Size),
     size_restrictions_per_row(Size, Board).
-% ====== Occurences ======
-two_occurences_per_row([]).
-two_occurences_per_row([Row | Board]):-
-    % 2 occurences of 1 (close) per row
-    count(1, Row, #=, 2),
-    % 2 occurences of 2 (far) per row
-    count(2, Row, #=, 2),
+
+% ====== Occurences restrictions ======
+apply_occurences_restrictrions(Board):-
+    % calculate number of 0's (empty)
+    % get number of cells per row (same as per col)
+    length(Board, NumberOfCells),
+    % get number of 0's (number of cells - (number of 1's + number of 2's))
+    NumberOfZeros #= NumberOfCells - 4,
+    % apply restrictions per row
+    occurences_restrictions_per_row(Board, NumberOfZeros),
+    % apply restrictions per colum (with transposed matrix)
+    transpose(Board, TransposedBoard),
+    occurences_restrictions_per_row(TransposedBoard, NumberOfZeros).
+
+occurences_restrictions_per_row([], _NumberOfZeros).
+occurences_restrictions_per_row([Row | Board], NumberOfZeros):-
+    global_cardinality(Row, [
+        % NumberOfZeros occurences of 0 (empty) per row
+        0-NumberOfZeros,
+        % 2 occurences of 1 (close) per row
+        1-2,
+        % 2 occurences of 2 (far) per row
+        2-2
+    ]),
     % apply restriction to next rows
-    two_occurences_per_row(Board).
-
-two_occurences_per_column_aux(_, 0).
-two_occurences_per_column_aux(Board, ColumnNumber):-
-    % get column
-    get_column(Board, ColumnNumber, Column),
-    % 2 occurences of 1 (close) per column
-    count(1, Column, #=, 2),
-    % 2 occurences of 2 (far) per column
-    count(2, Column, #=, 2),
-    % apply restriction to next columns
-    NextColumnNumber #= ColumnNumber - 1,
-    two_occurences_per_column_aux(Board, NextColumnNumber).
-
-two_occurences_per_column(Board):-
-    % get number of columns in Board
-    length(Board, NumberOfColumns),
-    two_occurences_per_column_aux(Board, NumberOfColumns).
-
-board_remainder_zeros([Row | Board]):-
-    % --- everything in a row besides two 1's and two 2's are 0's ---
-    % get number of columns
-    length(Board, NumberOfColumns),
-    % get number of 0's per row (number of colums - (number of 1's + number of 2's))
-    NumberOfZeros #= NumberOfColumns - 4,
-    % apply restriction
-    count(0, Row, #=, NumberOfZeros),
-    % apply restriction to next rows
-    board_remainder_zeros(Board).
+    occurences_restrictions_per_row(Board, NumberOfZeros).
 
 % ====== Distances ======
+apply_distance_restrictrions(Board):-
+    % apply restrictions per row
+    distance_restrictions_per_row(Board),
+    % apply restrictions per colum (with transposed board matrix)
+    transpose(Board, TransposedBoard),
+    distance_restrictions_per_row(TransposedBoard).
+
 get_distance_between_elements(List, Element, Distance):-
     % find indexes of Element in List
     element(FirstIndex, List, Element),
     element(SecondIndex, List, Element),
     % indexes have to be unique
     FirstIndex #\= SecondIndex,
+    % first index has to come first
+    FirstIndex #< SecondIndex,
     % calculate distance
     Distance #= SecondIndex - FirstIndex.
 
-distance_restriction_per_line([Row | Board]):-
+distance_restrictions_per_row([]).
+distance_restrictions_per_row([Row | Board]):-
     % get distance between 1's (close)
     get_distance_between_elements(Row, 1, CloseDistance),
     % get distance between 2's (far)
@@ -86,26 +84,7 @@ distance_restriction_per_line([Row | Board]):-
     % apply MAIN restriction
     CloseDistance #< FarDistance,
     % apply restriction to next rows
-    distance_restriction_per_line(Board).
-
-distance_restriction_per_column_aux(_, 0).
-distance_restriction_per_column_aux(Board, ColumnNumber):-
-    % get column
-    get_column(Board, ColumnNumber, Column),
-    % get distance between 1's (close)
-    get_distance_between_elements(Column, 1, CloseDistance),
-    % get distance between 2's (far)
-    get_distance_between_elements(Column, 2, FarDistance),
-    % apply MAIN restriction
-    CloseDistance #< FarDistance,
-    % apply restriction to next columns
-    NextColumnNumber #= ColumnNumber - 1,
-    distance_restriction_per_column_aux(Board, NextColumnNumber).
-
-distance_restriction_per_column(Board):-
-    % get number of columns in Board
-    length(Board, NumberOfColumns),
-    distance_restriction_per_column_aux(Board, NumberOfColumns).
+    distance_restrictions_per_row(Board).
 
 % =================================================================
 % Board Solver
@@ -115,16 +94,8 @@ solve_puzzle(Board):-
     % length is already defined by Board
     apply_domain(Board),
     % --- RESTRICTIONS ---
-    % 2 occurences of 1 (close) and 2 occurences of 2 (far) per row
-    two_occurences_per_row(Board),
-    % 2 occurences of 1 (close) and 2 occurences of 2 (far) per column
-    two_occurences_per_column(Board),
-    % remaining elements are all 0's (empty)
-    board_remainder_zeros(Board),
-    % distance between 1's (close) is smaller than 2's (far) in each line
-    distance_restriction_per_line(Board),
-    % distance between 1's (close) is smaller than 2's (far) in each column
-    distance_restriction_per_column(Board),
+    apply_occurences_restrictrions(Board),
+    apply_distance_restrictrions(Board),
     % --- LABELING ---
     labeling([], Board).
 
@@ -153,4 +124,5 @@ solve_line(Line):-
     % apply MAIN restriction
     CloseDistance #< FarDistance,
     % --- LABELING ---
-    labeling([], Line).
+    labeling([], Line),
+    write(Line), nl.

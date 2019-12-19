@@ -6,8 +6,7 @@
 % =================================================================
 test_line:-
     Line = [2, _, _, _, _, _],
-    solve_line(Line),
-    write(Line).
+    solve_line(Line), fail.
 
 % test for puzzle 1
 test_puzzle_1:-
