@@ -10,40 +10,30 @@
 % =================================================================
 % Decision Variables
 % =================================================================
-apply_domain([]).
-apply_domain([Row | Board]):-
+apply_solver_domain([]).
+apply_solver_domain([Row | Board]):-
     % (0 - empty, 1 - close, 2 - far)
     domain(Row, 0, 2),
-    apply_domain(Board).
+    apply_solver_domain(Board).
 
 % =================================================================
 % Restrictions
 % =================================================================
-% ====== Size restrictions =====
-size_restrictions_per_row(_Size, []).
-size_restrictions_per_row(Size, [Row | Board]):-
-    length(Row, Size),
-    size_restrictions_per_row(Size, Board).
-
-size_restrictions(Size, Board):-
-    length(Board, Size),
-    size_restrictions_per_row(Size, Board).
-
 % ====== Occurences restrictions ======
-apply_occurences_restrictrions(Board):-
+apply_solver_occurences_restrictrions(Board):-
     % calculate number of 0's (empty)
     % get number of cells per row (same as per col)
     length(Board, NumberOfCells),
     % get number of 0's (number of cells - (number of 1's + number of 2's))
     NumberOfZeros #= NumberOfCells - 4,
     % apply restrictions per row
-    occurences_restrictions_per_row(Board, NumberOfZeros),
+    solver_occurences_restrictions_per_row(Board, NumberOfZeros),
     % apply restrictions per colum (with transposed matrix)
     transpose(Board, TransposedBoard),
-    occurences_restrictions_per_row(TransposedBoard, NumberOfZeros).
+    solver_occurences_restrictions_per_row(TransposedBoard, NumberOfZeros).
 
-occurences_restrictions_per_row([], _NumberOfZeros).
-occurences_restrictions_per_row([Row | Board], NumberOfZeros):-
+solver_occurences_restrictions_per_row([], _NumberOfZeros).
+solver_occurences_restrictions_per_row([Row | Board], NumberOfZeros):-
     global_cardinality(Row, [
         % NumberOfZeros occurences of 0 (empty) per row
         0-NumberOfZeros,
@@ -53,15 +43,15 @@ occurences_restrictions_per_row([Row | Board], NumberOfZeros):-
         2-2
     ]),
     % apply restriction to next rows
-    occurences_restrictions_per_row(Board, NumberOfZeros).
+    solver_occurences_restrictions_per_row(Board, NumberOfZeros).
 
 % ====== Distances ======
-apply_distance_restrictrions(Board):-
+apply_solver_distance_restrictrions(Board):-
     % apply restrictions per row
-    distance_restrictions_per_row(Board),
+    solver_distance_restrictions_per_row(Board),
     % apply restrictions per colum (with transposed board matrix)
     transpose(Board, TransposedBoard),
-    distance_restrictions_per_row(TransposedBoard).
+    solver_distance_restrictions_per_row(TransposedBoard).
 
 get_distance_between_elements(List, Element, Distance):-
     % find indexes of Element in List
@@ -74,8 +64,8 @@ get_distance_between_elements(List, Element, Distance):-
     % calculate distance
     Distance #= SecondIndex - FirstIndex.
 
-distance_restrictions_per_row([]).
-distance_restrictions_per_row([Row | Board]):-
+solver_distance_restrictions_per_row([]).
+solver_distance_restrictions_per_row([Row | Board]):-
     % get distance between 1's (close)
     get_distance_between_elements(Row, 1, CloseDistance),
     % get distance between 2's (far)
@@ -83,7 +73,7 @@ distance_restrictions_per_row([Row | Board]):-
     % apply MAIN restriction
     CloseDistance #< FarDistance,
     % apply restriction to next rows
-    distance_restrictions_per_row(Board).
+    solver_distance_restrictions_per_row(Board).
 
 % =================================================================
 % Puzzle Solver
@@ -91,11 +81,12 @@ distance_restrictions_per_row([Row | Board]):-
 solve_puzzle(Board):-
     % --- DECISION VARIABLES ---
     % length is already defined by Board
-    apply_domain(Board),
+    apply_solver_domain(Board),
     % --- RESTRICTIONS ---
-    apply_occurences_restrictrions(Board),
-    apply_distance_restrictrions(Board),
+    apply_solver_occurences_restrictrions(Board),
+    apply_solver_distance_restrictrions(Board),
     % --- LABELING ---
+    % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),
     labeling([], FlatBoard).
 
