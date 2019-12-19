@@ -37,8 +37,8 @@ print_horizontal_separator(N):-
     N1 is N - 1,
     print_horizontal_separator(N1).
 
-print_matrix([], _, 0).
-print_matrix([Line | Board], Acc, N):-
+print_matrix([], 0).
+print_matrix([Line | Board], N):-
     write('| '),
     print_line(Line),
     nl,
@@ -47,7 +47,7 @@ print_matrix([Line | Board], Acc, N):-
     write('|'),
     print_horizontal_separator(Length),
     nl,
-    print_matrix(Board, Acc1, N1).
+    print_matrix(Board, N1).
 
 print_line([]).
 print_line([Cell | Line]):-
