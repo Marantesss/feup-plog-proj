@@ -6,12 +6,6 @@
 % Testing Purposes
 % See puzzles in file 'puzzles.pl'
 % =================================================================
-test_line:-
-    Line = [2, _, _, _, _, _],
-    solve_line(Line),
-    write(Line), nl,
-    fail.
-
 % test for puzzle 1
 test_puzzle_1:-
     puzzle_1(Board),
