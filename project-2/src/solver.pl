@@ -86,7 +86,7 @@ distance_restrictions_per_row([Row | Board]):-
     distance_restrictions_per_row(Board).
 
 % =================================================================
-% Board Solver
+% Puzzle Solver
 % =================================================================
 solve_puzzle(Board):-
     % --- DECISION VARIABLES ---
