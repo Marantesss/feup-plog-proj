@@ -17,9 +17,19 @@ apply_domain([Row | Board]):-
     domain(Row, 0, 2),
     apply_domain(Board).
 
+
 % =================================================================
 % Restrictions
 % =================================================================
+% ====== Size restrictions =====
+size_restrictions_per_row(_Size, []).
+size_restrictions_per_row(Size, [Row | Board]):-
+    length(Row, Size),
+    size_restrictions_per_row(Size, Board).
+
+size_restrictions(Size, Board):-
+    length(Board, Size),
+    size_restrictions_per_row(Size, Board).
 % ====== Occurences ======
 two_occurences_per_row([]).
 two_occurences_per_row([Row | Board]):-
