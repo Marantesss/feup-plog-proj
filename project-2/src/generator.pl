@@ -1,6 +1,7 @@
 :- consult('utils.pl').
 :- consult('solver.pl').
 :- use_module(library(random)).
+:- consult('display.pl').
 
 % =================================================================
 % Generate Empty Board
@@ -22,7 +23,21 @@ generate_row(Size, [_ | Row]):-
     generate_row(NewSize, Row).
 
 % =================================================================
-% Decision Variables -> DOES NOT WORK
+% Replace 0's with _
+% =================================================================
+replace_zeros_matrix([], []).
+replace_zeros_matrix([Row | Matrix], [NewRow | Rest]):-
+    replace_zeros_matrix(Matrix, Rest),
+    replace_zeros_row(Row, NewRow).
+
+replace_zeros_row([], []).
+replace_zeros_row([0 | Tail], [_ | Rest]):-
+    replace_zeros_row(Tail, Rest).
+replace_zeros_row([Head | Tail], [Head | Rest]):-
+    replace_zeros_row(Tail, Rest).
+
+% =================================================================
+% Decision Variables
 % =================================================================
 apply_generator_domain([]).
 apply_generator_domain([Row | Board]):-
@@ -55,27 +70,38 @@ generator_occurences_restrictions_per_row([Row | Board]):-
     % apply restricion to next rows
     generator_occurences_restrictions_per_row(Board).
 
+is_puzzle_solvable(Board):-
+    % create new variable equal to Board
+    replace_zeros_matrix(Board, NewBoard),
+    % figure out if puzzle is solvable
+    !,
+    solve_puzzle(NewBoard).
+
 % =================================================================
 % Puzzle Generator
 % =================================================================
 generate_random_puzzle(Size, RandomBoard):-
-    % find all possible puzzles
-    findall(Board, generate_puzzle(Size, Board), PossibleBoard),
-    % choose a random puzzle
-    random_member(RandomBoard, PossibleBoard).
-
-generate_puzzle(Size, Board):-
     % generate empty board
     generate_board(Size, Board),
+    % find all possible puzzles
+    findall(Board, generate_puzzle(Board), PossibleBoard),
+    % choose a random puzzle
+    % print_boards(PossibleBoard),
     !,
+    random_member(RandomBoard, PossibleBoard).
+
+generate_puzzle(Board):-
     % populate board with hints
-    build_puzzle(Board).
+    build_puzzle(Board),
+    % check if puzzle is solvable,
+    is_puzzle_solvable(Board).
 
 build_puzzle(Board):-
     %% --- DECISION VARIABLES ---
     % length is already defined by Board
     apply_generator_domain(Board),
     % --- RESTRICTIONS ---
+    % occurence restrictions
     apply_generator_occurences_restrictrions(Board),
     % --- LABELING ---
     append(Board, FlatBoard),
@@ -84,17 +110,33 @@ build_puzzle(Board):-
 % =================================================================
 % Testing
 % =================================================================
-test_findall:- % WORKS
-    Puzzle = [
-        [_, _, _, _, _, _],    
-        [_, _, _, _, _, _],    
-        [_, _, _, _, _, _],    
-        [_, _, _, _, _, _],    
-        [_, _, _, _, _, _],    
-        [_, _, _, _, _, _]
-    ],
-    findall(Puzzle, solve_puzzle(Puzzle), PB),
+test_findall:-
+    findall(Puzzle, generate_puzzle(6, Puzzle), PB),
     print_boards(PB).
+
+test_solvable:-
+    generate_random_puzzle(6, Puzzle),
+    write(Puzzle), nl,
+    is_puzzle_solvable(Puzzle).
+
+test_valid:- % works
+    is_puzzle_solvable([
+        [_, _, 1, _, _, _, _],
+        [1, _, _, _, _, _, _],
+        [_, _, _, _, 2, _, _],
+        [_, 2, _, _, _, _, _],
+        [_, _, _, _, _, _, 2],
+        [_, _, _, _, _, 2, _],
+        [_, _, _, 1, _, _, _]
+    ]),
+    is_puzzle_solvable([
+        [_, 2, _, _, _, _],    
+        [_, _, 2, _, _, _],    
+        [_, _, _, _, _, 2],    
+        [_, _, _, _, 2, _],    
+        [_, _, _, 2, _, _],    
+        [2, _, _, _, _, _] 
+    ]).
 
 print_boards([]).
 print_boards([Board | BoardList]):-
