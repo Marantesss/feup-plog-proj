@@ -55,16 +55,22 @@ apply_generator_domain_per_row([Cell | Row]):-
 % Restrictions
 % =================================================================
 apply_generator_occurences_restrictrions(Board):-
+    % calculate number of 0's (empty)
+    % get number of cells per row (same as per col)
+    length(Board, NumberOfCellsPerRow),
+    % get number of 0's (number of cells per row - (number of 1's + number of 2's))
+    NumberOfZeros #= NumberOfCellsPerRow - 1,
     % apply restrictions per row
-    generator_occurences_restrictions_per_row(Board),
+    generator_occurences_restrictions_per_row(Board, NumberOfZeros),
     % apply restrictions per colum (with transposed matrix)
     transpose(Board, TransposedBoard),
-    generator_occurences_restrictions_per_row(TransposedBoard).
+    generator_occurences_restrictions_per_row(TransposedBoard, NumberOfZeros).
 
-generator_occurences_restrictions_per_row([]).
-generator_occurences_restrictions_per_row([Row | Board]):-
+generator_occurences_restrictions_per_row([], _NumberOfZeros).
+generator_occurences_restrictions_per_row([Row | Board], NumberOfZeros):-
     % hint can only be 1 ONE occurence of 1 (close) OR 2 (far) per row/colum
     % everything else is 0 (no hint/unknown)
+    count(0, Row, #=, NumberOfZeros),
     count(1, Row, #=, NumberOfOnes),
     count(2, Row, #=, NumberOfTwos),
     (
@@ -73,7 +79,7 @@ generator_occurences_restrictions_per_row([Row | Board]):-
         (NumberOfOnes #= 1 #/\ NumberOfTwos #= 0)
     ),
     % apply restricion to next rows
-    generator_occurences_restrictions_per_row(Board).
+    generator_occurences_restrictions_per_row(Board, NumberOfZeros).
 
 is_puzzle_solvable(Board):-
     % create new variable equal to Board
