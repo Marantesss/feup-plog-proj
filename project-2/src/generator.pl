@@ -55,20 +55,31 @@ apply_generator_domain_per_row([Cell | Row]):-
 % Restrictions
 % =================================================================
 apply_generator_occurences_restrictrions(Board):-
+    % calculate number of 0's (no hint/unknown)
+    % get number of cells per row (same as per col)
+    length(Board, NumberOfCellsPerRow),
+    % get number of 0's (number of cells per row - (number of 1's + number of 2's))
+    NumberOfZeros #= NumberOfCellsPerRow - 1,
     % apply restrictions per row
-    generator_occurences_restrictions_per_row(Board),
+    generator_occurences_restrictions_per_row(Board, NumberOfZeros),
     % apply restrictions per colum (with transposed matrix)
     transpose(Board, TransposedBoard),
-    generator_occurences_restrictions_per_row(TransposedBoard).
+    generator_occurences_restrictions_per_row(TransposedBoard, NumberOfZeros).
 
-generator_occurences_restrictions_per_row([]).
-generator_occurences_restrictions_per_row([Row | Board]):-
+generator_occurences_restrictions_per_row([], _NumberOfZeros).
+generator_occurences_restrictions_per_row([Row | Board], NumberOfZeros):-
     % hint can only be 1 ONE occurence of 1 (close) OR 2 (far) per row/colum
+    % everything else is 0 (no hint/unknown)
+    count(0, Row, #=, NumberOfZeros),
     count(1, Row, #=, NumberOfOnes),
     count(2, Row, #=, NumberOfTwos),
-    (NumberOfOnes #= 1 #/\ NumberOfTwos #= 0) #\/ (NumberOfOnes #= 0 #/\ NumberOfTwos #= 1), 
+    (
+        (NumberOfOnes #= 0 #/\ NumberOfTwos #= 1)
+        #\/
+        (NumberOfOnes #= 1 #/\ NumberOfTwos #= 0)
+    ),
     % apply restricion to next rows
-    generator_occurences_restrictions_per_row(Board).
+    generator_occurences_restrictions_per_row(Board, NumberOfZeros).
 
 is_puzzle_solvable(Board):-
     % create new variable equal to Board
@@ -86,7 +97,6 @@ generate_random_puzzle(Size, RandomBoard):-
     % find all possible puzzles
     findall(Board, generate_puzzle(Board), PossibleBoard),
     % choose a random puzzle
-    % print_boards(PossibleBoard),
     !,
     random_member(RandomBoard, PossibleBoard).
 
@@ -106,6 +116,21 @@ build_puzzle(Board):-
     % --- LABELING ---
     append(Board, FlatBoard),
     labeling([], FlatBoard).
+
+random_value(Var, _Rest, BB, BB1):-
+    fd_set(Var, Set),
+    select_random_value(Set, Value),
+    (
+        first_bound(BB, BB1), Var #= Value
+        ;
+        later_bound(BB, BB1), Var #\= Value
+    ).
+
+select_random_value(Set, RandomValue):-
+    fdset_to_list(Set, List),
+    length(List, Len),
+    random(0, Len, RandomIndex),
+    nth0(RandomIndex, List, RandomValue).
 
 % =================================================================
 % Testing

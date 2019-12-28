@@ -23,9 +23,9 @@ apply_solver_domain([Row | Board]):-
 apply_solver_occurences_restrictrions(Board):-
     % calculate number of 0's (empty)
     % get number of cells per row (same as per col)
-    length(Board, NumberOfCells),
-    % get number of 0's (number of cells - (number of 1's + number of 2's))
-    NumberOfZeros #= NumberOfCells - 4,
+    length(Board, NumberOfCellsPerRow),
+    % get number of 0's (number of cells per row - (number of 1's + number of 2's))
+    NumberOfZeros #= NumberOfCellsPerRow - 4,
     % apply restrictions per row
     solver_occurences_restrictions_per_row(Board, NumberOfZeros),
     % apply restrictions per colum (with transposed matrix)
