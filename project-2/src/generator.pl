@@ -110,10 +110,6 @@ build_puzzle(Board):-
 % =================================================================
 % Testing
 % =================================================================
-test_findall:-
-    findall(Puzzle, generate_puzzle(6, Puzzle), PB),
-    print_boards(PB).
-
 test_solvable:-
     generate_random_puzzle(6, Puzzle),
     write(Puzzle), nl,
