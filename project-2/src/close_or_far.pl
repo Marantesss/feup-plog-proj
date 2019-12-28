@@ -47,9 +47,7 @@ play(Size):-
     % replace 0's with _
     replace_zeros_matrix(Board, NewBoard),
     % solve puzzle
-    %write(NewBoard), nl,
     solve_puzzle(NewBoard),
     % print solved puzzle
-    %write(NewBoard).
     print_board(NewBoard).
 
