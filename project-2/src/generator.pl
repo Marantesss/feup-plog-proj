@@ -1,7 +1,6 @@
 :- consult('utils.pl').
 :- consult('solver.pl').
 :- use_module(library(random)).
-:- consult('display.pl').
 
 % =================================================================
 % Generate Empty Board
@@ -61,7 +60,7 @@ generate_random_solution(Size, Board):-
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),
-    labeling([variable(random_variable), value(random_value)], FlatBoard).
+    labeling([value(random_value)], FlatBoard).
 
 generate_random_puzzle(Size, PuzzleBoard):-
     % generate random solution
