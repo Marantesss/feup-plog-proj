@@ -23,20 +23,6 @@ generate_row(Size, [_ | Row]):-
     generate_row(NewSize, Row).
 
 % =================================================================
-% Replace 0's with _
-% =================================================================
-replace_zeros_matrix([], []).
-replace_zeros_matrix([Row | Matrix], [NewRow | Rest]):-
-    replace_zeros_matrix(Matrix, Rest),
-    replace_zeros_row(Row, NewRow).
-
-replace_zeros_row([], []).
-replace_zeros_row([0 | Tail], [_ | Rest]):-
-    replace_zeros_row(Tail, Rest).
-replace_zeros_row([Head | Tail], [Head | Rest]):-
-    replace_zeros_row(Tail, Rest).
-
-% =================================================================
 % Decision Variables
 % =================================================================
 apply_generator_domain([]).
@@ -81,24 +67,32 @@ generator_occureences_restrictions_per_row([Row | Board], NumberOfZeros):-
     % apply restricion to next rows
     generator_occureences_restrictions_per_row(Board, NumberOfZeros).
 
-is_puzzle_solvable(Board):-
-    % create new variable equal to Board
-    replace_zeros_matrix(Board, NewBoard),
-    % figure out if puzzle is solvable
-    !,
-    solve_puzzle(NewBoard).
+% row is empty
+populate_puzzle_row([], [], _HintNumber).
+% solution is a 0, so puzzle is unknown
+populate_puzzle_row([0 | SolutionRow], [_ | PuzzleRow], HintNumber):-
+    populate_puzzle_row(SolutionRow, PuzzleRow, HintNumber).
+% solution is different from 0 and HintNumber is 0, write solution in puzzle
+populate_puzzle_row([SolutionCell | SolutionRow], [SolutionCell | PuzzleRow], 0):-
+    populate_puzzle_row(SolutionRow, PuzzleRow, -1).
+% solution is different from 0 but HintNumber is different from 0, puzzle is unknown
+populate_puzzle_row([_SolutionCell | SolutionRow], [0 | PuzzleRow], HintNumber):-
+    NewHintNumber is HintNumber - 1,
+    populate_puzzle_row(SolutionRow, PuzzleRow, NewHintNumber).
+
+populate_puzzle([], []).
+populate_puzzle([SolutionRow | SolutionBoard], [PuzzleRow | PuzzleBoard]):-
+    random(0, 3, HintNumber),
+    populate_puzzle_row(SolutionRow, PuzzleRow, HintNumber),
+    populate_puzzle(SolutionBoard, PuzzleBoard).
 
 % =================================================================
 % Puzzle Generator
 % =================================================================
-generate_random_puzzle(Size, Board):-
+generate_random_solution(Size, Board):-
+    % --- DECISION VARIABLES ---
     % generate empty board
     generate_board(Size, Board),
-    % generate a random puzzle
-    generate_puzzle(Board).
-
-generate_random_solution(Board):-
-    % --- DECISION VARIABLES ---
     % length is already defined by Board
     apply_solver_domain(Board),
     % --- RESTRICTIONS ---
@@ -109,23 +103,26 @@ generate_random_solution(Board):-
     append(Board, FlatBoard),
     labeling([variable(random_variable), value(random_value)], FlatBoard).
 
-generate_puzzle(Board):-
-    % populate board with hints
-    build_puzzle(Board),
-    % check if puzzle is solvable,
-    is_puzzle_solvable(Board).
+generate_random_puzzle(Size, PuzzleBoard):-
+    % generate random solution
+    generate_random_solution(Size, SolutionBoard),
+    % generate a puzzle from random solution
+    generate_puzzle(SolutionBoard, PuzzleBoard).
 
-build_puzzle(Board):-
+generate_puzzle(SolutionBoard, PuzzleBoard):-
     %% --- DECISION VARIABLES ---
     % length is already defined by Board
-    apply_generator_domain(Board),
+    apply_generator_domain(PuzzleBoard),
     % --- RESTRICTIONS ---
-    % occureence restrictions
-    apply_generator_occurrences_restrictrions(Board),
+    % occurrence restrictions
+    apply_generator_occurrences_restrictrions(PuzzleBoard),
     % --- LABELING ---
-    append(Board, FlatBoard),
-    labeling([variable(random_variable), value(random_value)], FlatBoard).
+    append(PuzzleBoard, FlatBoard),
+    labeling([], FlatBoard).
 
+% =================================================================
+% Labeling Options
+% =================================================================
 % select random variable
 random_variable(ListOfVars, Var, Rest):-
     random_select(Var, ListOfVars, Rest).
@@ -151,26 +148,3 @@ test_solvable:-
     write(Puzzle), nl,
     is_puzzle_solvable(Puzzle).
 
-test_valid:- % works
-    is_puzzle_solvable([
-        [_, _, 1, _, _, _, _],
-        [1, _, _, _, _, _, _],
-        [_, _, _, _, 2, _, _],
-        [_, 2, _, _, _, _, _],
-        [_, _, _, _, _, _, 2],
-        [_, _, _, _, _, 2, _],
-        [_, _, _, 1, _, _, _]
-    ]),
-    is_puzzle_solvable([
-        [_, 2, _, _, _, _],    
-        [_, _, 2, _, _, _],    
-        [_, _, _, _, _, 2],    
-        [_, _, _, _, 2, _],    
-        [_, _, _, 2, _, _],    
-        [2, _, _, _, _, _] 
-    ]).
-
-print_boards([]).
-print_boards([Board | BoardList]):-
-    print_board(Board), nl,
-    print_boards(BoardList).
