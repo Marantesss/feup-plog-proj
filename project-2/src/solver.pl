@@ -19,31 +19,31 @@ apply_solver_domain([Row | Board]):-
 % =================================================================
 % Restrictions
 % =================================================================
-% ====== Occurences restrictions ======
-apply_solver_occurences_restrictrions(Board):-
+% ====== Occurrences restrictions ======
+apply_solver_occurrences_restrictrions(Board):-
     % calculate number of 0's (empty)
     % get number of cells per row (same as per col)
     length(Board, NumberOfCellsPerRow),
     % get number of 0's (number of cells per row - (number of 1's + number of 2's))
     NumberOfZeros #= NumberOfCellsPerRow - 4,
     % apply restrictions per row
-    solver_occurences_restrictions_per_row(Board, NumberOfZeros),
+    solver_occurrences_restrictions_per_row(Board, NumberOfZeros),
     % apply restrictions per colum (with transposed matrix)
     transpose(Board, TransposedBoard),
-    solver_occurences_restrictions_per_row(TransposedBoard, NumberOfZeros).
+    solver_occurrences_restrictions_per_row(TransposedBoard, NumberOfZeros).
 
-solver_occurences_restrictions_per_row([], _NumberOfZeros).
-solver_occurences_restrictions_per_row([Row | Board], NumberOfZeros):-
+solver_occurrences_restrictions_per_row([], _NumberOfZeros).
+solver_occurrences_restrictions_per_row([Row | Board], NumberOfZeros):-
     global_cardinality(Row, [
-        % NumberOfZeros occurences of 0 (empty) per row
+        % NumberOfZeros occurrences of 0 (empty) per row
         0-NumberOfZeros,
-        % 2 occurences of 1 (close) per row
+        % 2 occurrences of 1 (close) per row
         1-2,
-        % 2 occurences of 2 (far) per row
+        % 2 occurrences of 2 (far) per row
         2-2
     ]),
     % apply restriction to next rows
-    solver_occurences_restrictions_per_row(Board, NumberOfZeros).
+    solver_occurrences_restrictions_per_row(Board, NumberOfZeros).
 
 % ====== Distances ======
 apply_solver_distance_restrictrions(Board):-
@@ -83,7 +83,7 @@ solve_puzzle(Board):-
     % length is already defined by Board
     apply_solver_domain(Board),
     % --- RESTRICTIONS ---
-    apply_solver_occurences_restrictrions(Board),
+    apply_solver_occurrences_restrictrions(Board),
     apply_solver_distance_restrictrions(Board),
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
