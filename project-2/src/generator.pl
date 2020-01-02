@@ -115,19 +115,16 @@ build_puzzle(Board):-
     labeling([value(random_value)], FlatBoard).
 
 random_value(Var, _Rest, BB, BB1):-
+    % get finite domain set
     fd_set(Var, Set),
-    select_random_value(Set, Value),
-    (
-        first_bound(BB, BB1), Var #= Value
-        ;
-        later_bound(BB, BB1), Var #\= Value
-    ).
-
-select_random_value(Set, RandomValue):-
+    % trasform it to list and choose a random value
     fdset_to_list(Set, List),
-    length(List, Len),
-    random(0, Len, RandomIndex),
-    nth0(RandomIndex, List, RandomValue).
+    random_member(RandomValue, List),
+    (
+        first_bound(BB, BB1), Var #= RandomValue
+        ;
+        later_bound(BB, BB1), Var #\= RandomValue
+    ).
 
 % =================================================================
 % Testing
