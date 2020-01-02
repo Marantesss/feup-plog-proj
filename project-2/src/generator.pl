@@ -97,6 +97,18 @@ generate_random_puzzle(Size, Board):-
     % generate a random puzzle
     generate_puzzle(Board).
 
+generate_random_solution(Board):-
+    % --- DECISION VARIABLES ---
+    % length is already defined by Board
+    apply_solver_domain(Board),
+    % --- RESTRICTIONS ---
+    apply_solver_occurrences_restrictrions(Board),
+    apply_solver_distance_restrictrions(Board),
+    % --- LABELING ---
+    % flatten Board into a 1 dimensional list
+    append(Board, FlatBoard),
+    labeling([variable(random_variable), value(random_value)], FlatBoard).
+
 generate_puzzle(Board):-
     % populate board with hints
     build_puzzle(Board),
