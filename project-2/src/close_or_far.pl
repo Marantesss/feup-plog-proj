@@ -40,14 +40,14 @@ AnotherPuzzle = [
 */
 
 play(Size):-
-    % generate random puzze with given size
-    generate_random_puzzle(Size, Board),
-    % print board so user can see
-    print_board(Board),
+    % generate random puzzle with given size
+    generate_random_puzzle(Size, PuzzleBoard),
+    % print puzzle
+    print_board(PuzzleBoard),
     % replace 0's with _
-    replace_zeros_matrix(Board, NewBoard),
+    replace_zeros_matrix(PuzzleBoard, SolutionBoard),
     % solve puzzle
-    solve_puzzle(NewBoard),
+    solve_puzzle(SolutionBoard),
     % print solved puzzle
-    print_board(NewBoard).
+    print_board(SolutionBoard).
 
