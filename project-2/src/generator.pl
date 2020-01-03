@@ -34,12 +34,12 @@ populate_puzzle([PuzzleRow | PuzzleBoard], [HintColumnsCell | HintColumns], [Hin
 % =================================================================
 % Find hints from Solution
 % =================================================================
-apply_generator_occurrences_restrictions([], [], []).
-apply_generator_occurrences_restrictions([SolutionRow | SolutionBoard], [HintColumnsCell | HintColumns], [HintValuesCell | HintValues]):-
+apply_generator_occurrences_constraints([], [], []).
+apply_generator_occurrences_constraints([SolutionRow | SolutionBoard], [HintColumnsCell | HintColumns], [HintValuesCell | HintValues]):-
     % hint column and value have to be consistent with solution row
     element(HintColumnsCell, SolutionRow, HintValuesCell),
     % repeat for next row
-    apply_generator_occurrences_restrictions(SolutionBoard, HintColumns, HintValues).
+    apply_generator_occurrences_constraints(SolutionBoard, HintColumns, HintValues).
 
 find_hints(SolutionBoard, HintColumns, HintValues):-
     % --- DECISION VARIABLES ---
@@ -50,10 +50,10 @@ find_hints(SolutionBoard, HintColumns, HintValues):-
     % hintValues's domain is 1 or 2 (C or F)
     length(HintValues, NumberOfColumns),
     domain(HintValues, 1, 2),
-    % --- RESTRICTIONS ---
+    % --- CONSTRAINTS ---
     % only one hint per row and column
     all_distinct(HintColumns),
-    apply_generator_occurrences_restrictions(SolutionBoard, HintColumns, HintValues),
+    apply_generator_occurrences_constraints(SolutionBoard, HintColumns, HintValues),
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
     append(HintColumns, HintValues, Hints),
@@ -68,9 +68,9 @@ generate_random_solution(Size, Board):-
     generate_board(Size, Board),
     % length is already defined by Board
     apply_solver_domain(Board),
-    % --- RESTRICTIONS ---
-    apply_solver_occurrences_restrictions(Board),
-    apply_solver_distance_restrictions(Board),
+    % --- CONSTRAINTS ---
+    apply_solver_occurrences_constraints(Board),
+    apply_solver_distance_constraints(Board),
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),

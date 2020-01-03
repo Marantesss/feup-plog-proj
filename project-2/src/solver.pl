@@ -17,23 +17,23 @@ apply_solver_domain([Row | Board]):-
     apply_solver_domain(Board).
 
 % =================================================================
-% Restrictions
+% Constraints
 % =================================================================
-% ====== Occurrences restrictions ======
-apply_solver_occurrences_restrictions(Board):-
+% ====== Occurrences constraints ======
+apply_solver_occurrences_constraints(Board):-
     % calculate number of 0's (empty)
     % get number of cells per row (same as per col)
     length(Board, NumberOfCellsPerRow),
     % get number of 0's (number of cells per row - (number of 1's + number of 2's))
     NumberOfZeros #= NumberOfCellsPerRow - 4,
-    % apply restrictions per row
-    solver_occurrences_restrictions_per_row(Board, NumberOfZeros),
-    % apply restrictions per colum (with transposed matrix)
+    % apply constraints per row
+    solver_occurrences_constraints_per_row(Board, NumberOfZeros),
+    % apply constraints per colum (with transposed matrix)
     transpose(Board, TransposedBoard),
-    solver_occurrences_restrictions_per_row(TransposedBoard, NumberOfZeros).
+    solver_occurrences_constraints_per_row(TransposedBoard, NumberOfZeros).
 
-solver_occurrences_restrictions_per_row([], _NumberOfZeros).
-solver_occurrences_restrictions_per_row([Row | Board], NumberOfZeros):-
+solver_occurrences_constraints_per_row([], _NumberOfZeros).
+solver_occurrences_constraints_per_row([Row | Board], NumberOfZeros):-
     global_cardinality(Row, [
         % NumberOfZeros occurrences of 0 (empty) per row
         0-NumberOfZeros,
@@ -42,16 +42,16 @@ solver_occurrences_restrictions_per_row([Row | Board], NumberOfZeros):-
         % 2 occurrences of 2 (far) per row
         2-2
     ]),
-    % apply restriction to next rows
-    solver_occurrences_restrictions_per_row(Board, NumberOfZeros).
+    % apply constraints to next rows
+    solver_occurrences_constraints_per_row(Board, NumberOfZeros).
 
 % ====== Distances ======
-apply_solver_distance_restrictions(Board):-
-    % apply restrictions per row
-    solver_distance_restrictions_per_row(Board),
-    % apply restrictions per colum (with transposed board matrix)
+apply_solver_distance_constraints(Board):-
+    % apply constraints per row
+    solver_distance_constraints_per_row(Board),
+    % apply constraints per colum (with transposed board matrix)
     transpose(Board, TransposedBoard),
-    solver_distance_restrictions_per_row(TransposedBoard).
+    solver_distance_constraints_per_row(TransposedBoard).
 
 get_distance_between_elements(List, Element, Distance):-
     % find indexes of Element in List
@@ -64,16 +64,16 @@ get_distance_between_elements(List, Element, Distance):-
     % calculate distance
     Distance #= SecondIndex - FirstIndex.
 
-solver_distance_restrictions_per_row([]).
-solver_distance_restrictions_per_row([Row | Board]):-
+solver_distance_constraints_per_row([]).
+solver_distance_constraints_per_row([Row | Board]):-
     % get distance between 1's (close)
     get_distance_between_elements(Row, 1, CloseDistance),
     % get distance between 2's (far)
     get_distance_between_elements(Row, 2, FarDistance),
-    % apply MAIN restriction
+    % apply MAIN constraints
     CloseDistance #< FarDistance,
-    % apply restriction to next rows
-    solver_distance_restrictions_per_row(Board).
+    % apply constraints to next rows
+    solver_distance_constraints_per_row(Board).
 
 % =================================================================
 % Puzzle Solver
@@ -82,9 +82,9 @@ solve_puzzle(Board):-
     % --- DECISION VARIABLES ---
     % length is already defined by Board
     apply_solver_domain(Board),
-    % --- RESTRICTIONS ---
-    apply_solver_occurrences_restrictions(Board),
-    apply_solver_distance_restrictions(Board),
+    % --- CONSTRAINTS ---
+    apply_solver_occurrences_constraints(Board),
+    apply_solver_distance_constraints(Board),
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),
