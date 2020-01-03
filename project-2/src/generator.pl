@@ -69,8 +69,8 @@ generate_random_solution(Size, Board):-
     % length is already defined by Board
     apply_solver_domain(Board),
     % --- RESTRICTIONS ---
-    apply_solver_occurrences_restrictrions(Board),
-    apply_solver_distance_restrictrions(Board),
+    apply_solver_occurrences_restrictions(Board),
+    apply_solver_distance_restrictions(Board),
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),

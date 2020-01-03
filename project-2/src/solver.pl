@@ -46,7 +46,7 @@ solver_occurrences_restrictions_per_row([Row | Board], NumberOfZeros):-
     solver_occurrences_restrictions_per_row(Board, NumberOfZeros).
 
 % ====== Distances ======
-apply_solver_distance_restrictrions(Board):-
+apply_solver_distance_restrictions(Board):-
     % apply restrictions per row
     solver_distance_restrictions_per_row(Board),
     % apply restrictions per colum (with transposed board matrix)
@@ -84,7 +84,7 @@ solve_puzzle(Board):-
     apply_solver_domain(Board),
     % --- RESTRICTIONS ---
     apply_solver_occurrences_restrictions(Board),
-    apply_solver_distance_restrictrions(Board),
+    apply_solver_distance_restrictions(Board),
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),
