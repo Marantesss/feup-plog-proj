@@ -89,10 +89,6 @@ generate_random_puzzle(Size, PuzzleBoard):-
 % =================================================================
 % Labeling Options
 % =================================================================
-% select random variable
-random_variable(ListOfVars, Var, Rest):-
-    random_select(Var, ListOfVars, Rest).
-
 % select random value
 random_value(Var, _Rest, BB, BB1):-
     % get finite domain set
