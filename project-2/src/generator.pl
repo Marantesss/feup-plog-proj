@@ -27,7 +27,7 @@ generate_row(Size, [_ | Row]):-
 % row is empty
 populate_puzzle_row([], [], _HintNumber).
 % solution is a 0, so puzzle is unknown
-populate_puzzle_row([0 | SolutionRow], [_ | PuzzleRow], HintNumber):-
+populate_puzzle_row([0 | SolutionRow], [0 | PuzzleRow], HintNumber):-
     populate_puzzle_row(SolutionRow, PuzzleRow, HintNumber).
 % solution is different from 0 and HintNumber is 0, write solution in puzzle
 populate_puzzle_row([SolutionCell | SolutionRow], [SolutionCell | PuzzleRow], 0):-
