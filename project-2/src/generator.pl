@@ -22,28 +22,42 @@ generate_row(Size, [_ | Row]):-
     generate_row(NewSize, Row).
 
 % =================================================================
-% Populate Puzzle with hints from Solution
+% Populate Puzzle with hints found from Solution
 % =================================================================
-% row is empty
-populate_puzzle_row([], [], _HintNumber).
-% solution is a 0, so puzzle is unknown
-populate_puzzle_row([0 | SolutionRow], [0 | PuzzleRow], HintNumber):-
-    populate_puzzle_row(SolutionRow, PuzzleRow, HintNumber).
-% solution is different from 0 and HintNumber is 0, write solution in puzzle
-populate_puzzle_row([SolutionCell | SolutionRow], [SolutionCell | PuzzleRow], 0):-
-    populate_puzzle_row(SolutionRow, PuzzleRow, -1).
-% solution is different from 0 but HintNumber is different from 0, puzzle is unknown
-populate_puzzle_row([_SolutionCell | SolutionRow], [0 | PuzzleRow], HintNumber):-
-    NewHintNumber is HintNumber - 1,
-    populate_puzzle_row(SolutionRow, PuzzleRow, NewHintNumber).
+populate_puzzle([], [], []).
+populate_puzzle([PuzzleRow | PuzzleBoard], [HintColumnsCell | HintColumns], [HintValuesCell | HintValues]):-
+    % write HintValue in HintColumn of PuzzleRow
+    nth1(HintColumnsCell, PuzzleRow, HintValuesCell),
+    % repeat for next row
+    populate_puzzle(PuzzleBoard, HintColumns, HintValues).
 
-populate_puzzle([], []).
-populate_puzzle([SolutionRow | SolutionBoard], [PuzzleRow | PuzzleBoard]):-
-    % 4 'pieces' (2 C's + 2 F's), select a random one
-    random(0, 3, HintNumber),
-    % populate puzzle
-    populate_puzzle_row(SolutionRow, PuzzleRow, HintNumber),
-    populate_puzzle(SolutionBoard, PuzzleBoard).
+% =================================================================
+% Find hints from Solution
+% =================================================================
+apply_generator_occurrences_restrictions([], [], []).
+apply_generator_occurrences_restrictions([SolutionRow | SolutionBoard], [HintColumnsCell | HintColumns], [HintValuesCell | HintValues]):-
+    % hint column and value have to be consistent with solution row
+    element(HintColumnsCell, SolutionRow, HintValuesCell),
+    % repeat for next row
+    apply_generator_occurrences_restrictions(SolutionBoard, HintColumns, HintValues).
+
+find_hints(SolutionBoard, HintColumns, HintValues):-
+    % --- DECISION VARIABLES ---
+    length(SolutionBoard, NumberOfColumns),
+    % hintColumns' domain is [1, Board's number of columns]
+    length(HintColumns, NumberOfColumns),
+    domain(HintColumns, 1, NumberOfColumns),
+    % hintValues's domain is 1 or 2 (C or F)
+    length(HintValues, NumberOfColumns),
+    domain(HintValues, 1, 2),
+    % --- RESTRICTIONS ---
+    % only one hint per row and column
+    all_distinct(HintColumns),
+    apply_generator_occurrences_restrictions(SolutionBoard, HintColumns, HintValues),
+    % --- LABELING ---
+    % flatten Board into a 1 dimensional list
+    append(HintColumns, HintValues, Hints),
+    labeling([value(random_value)], Hints).
 
 % =================================================================
 % Puzzle Generator
@@ -65,8 +79,12 @@ generate_random_solution(Size, Board):-
 generate_random_puzzle(Size, PuzzleBoard):-
     % generate random solution
     generate_random_solution(Size, SolutionBoard),
-    % generate a puzzle from random solution
-    populate_puzzle(SolutionBoard, PuzzleBoard).
+    % find hints from solution board
+    find_hints(SolutionBoard, HintColumns, HintValues),
+    % generate empty board
+    generate_board(Size, PuzzleBoard),
+    % populate puzzle from hints found
+    populate_puzzle(PuzzleBoard, HintColumns, HintValues).
 
 % =================================================================
 % Labeling Options
@@ -87,9 +105,3 @@ random_value(Var, _Rest, BB, BB1):-
         ;
         later_bound(BB, BB1), Var #\= RandomValue
     ).
-
-% =================================================================
-% Testing
-% =================================================================
-
-

@@ -20,7 +20,7 @@ apply_solver_domain([Row | Board]):-
 % Restrictions
 % =================================================================
 % ====== Occurrences restrictions ======
-apply_solver_occurrences_restrictrions(Board):-
+apply_solver_occurrences_restrictions(Board):-
     % calculate number of 0's (empty)
     % get number of cells per row (same as per col)
     length(Board, NumberOfCellsPerRow),
@@ -83,7 +83,7 @@ solve_puzzle(Board):-
     % length is already defined by Board
     apply_solver_domain(Board),
     % --- RESTRICTIONS ---
-    apply_solver_occurrences_restrictrions(Board),
+    apply_solver_occurrences_restrictions(Board),
     apply_solver_distance_restrictrions(Board),
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
