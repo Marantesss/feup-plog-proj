@@ -7,18 +7,18 @@
 2 -> FAR
 */
 
-% =================================================================
+% ==================================================
 % Decision Variables
-% =================================================================
+% ==================================================
 apply_solver_domain([]).
 apply_solver_domain([Row | Board]):-
     % (0 - empty, 1 - close, 2 - far)
     domain(Row, 0, 2),
     apply_solver_domain(Board).
 
-% =================================================================
+% ==================================================
 % Constraints
-% =================================================================
+% ==================================================
 % ====== Occurrences constraints ======
 apply_solver_occurrences_constraints(Board):-
     % calculate number of 0's (empty)
@@ -75,9 +75,9 @@ solver_distance_constraints_per_row([Row | Board]):-
     % apply constraints to next rows
     solver_distance_constraints_per_row(Board).
 
-% =================================================================
+% ==================================================
 % Puzzle Solver
-% =================================================================
+% ==================================================
 solve_puzzle(Board, Runtime):-
     % --- START STATISTICS ---
     %statistics - runtime calculation (ms) 

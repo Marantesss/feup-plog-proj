@@ -2,9 +2,9 @@
 :- consult('solver.pl').
 :- use_module(library(random)).
 
-% =================================================================
+% ==================================================
 % Generate Empty Board
-% =================================================================
+% ==================================================
 % generate empty board matrix given its size
 generate_board(Size, Board):-
     generate_board_aux(Size, Size, Board).
@@ -21,9 +21,9 @@ generate_row(Size, [_ | Row]):-
     NewSize is Size - 1,
     generate_row(NewSize, Row).
 
-% =================================================================
+% ==================================================
 % Populate Puzzle with hints found from Solution
-% =================================================================
+% ==================================================
 populate_puzzle([], [], []).
 populate_puzzle([PuzzleRow | PuzzleBoard], [HintColumnsCell | HintColumns], [HintValuesCell | HintValues]):-
     % write HintValue in HintColumn of PuzzleRow
@@ -31,9 +31,9 @@ populate_puzzle([PuzzleRow | PuzzleBoard], [HintColumnsCell | HintColumns], [Hin
     % repeat for next row
     populate_puzzle(PuzzleBoard, HintColumns, HintValues).
 
-% =================================================================
+% ==================================================
 % Find hints from Solution
-% =================================================================
+% ==================================================
 apply_generator_occurrences_constraints([], [], []).
 apply_generator_occurrences_constraints([SolutionRow | SolutionBoard], [HintColumnsCell | HintColumns], [HintValuesCell | HintValues]):-
     % hint column and value have to be consistent with solution row
@@ -59,9 +59,9 @@ find_hints(SolutionBoard, HintColumns, HintValues):-
     append(HintColumns, HintValues, Hints),
     labeling([value(random_value)], Hints).
 
-% =================================================================
+% ==================================================
 % Puzzle Generator
-% =================================================================
+% ==================================================
 generate_random_solution(Size, Board):-
     % --- DECISION VARIABLES ---
     % generate empty board
@@ -93,9 +93,9 @@ generate_random_puzzle(Size, PuzzleBoard, Runtime):-
     statistics(runtime, [Stop|_]),
     Runtime is Stop - Start.
 
-% =================================================================
+% ==================================================
 % Labeling Options
-% =================================================================
+% ==================================================
 % select random value
 random_value(Var, _Rest, BB, BB1):-
     % get finite domain set
