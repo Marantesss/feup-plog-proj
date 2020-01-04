@@ -170,10 +170,10 @@ test_solver_10:-
     AvgRuntime is (Runtime1 + Runtime2 + Runtime3 + Runtime4 + Runtime5 + Runtime6 + Runtime7 + Runtime8 + Runtime9 + Runtime10) / 10,
     format(' > Average runtime: ~3d s~n', [AvgRuntime]).
 
-% =================================================================
+% ==================================================
 % Randomly Generated Puzzles
 % using generate_random_puzzle predicate
-% =================================================================
+% ==================================================
 % 6x6
 puzzle_6_1([
     [1,_,_,_,_,_],
