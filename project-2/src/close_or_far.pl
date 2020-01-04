@@ -10,7 +10,10 @@ play(Size):-
     % replace 0's with _
     replace_zeros_matrix(PuzzleBoard, SolutionBoard),
     % solve puzzle
-    solve_puzzle(SolutionBoard),
+    solve_puzzle(SolutionBoard, SolverRuntime),
     % print solved puzzle
-    print_board(SolutionBoard).
+    print_board(SolutionBoard),
+    % print runtime
+    format(' > Solver runtime: ~3d s~n', [SolverRuntime]).
+
 

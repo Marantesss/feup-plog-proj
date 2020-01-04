@@ -78,7 +78,10 @@ solver_distance_constraints_per_row([Row | Board]):-
 % =================================================================
 % Puzzle Solver
 % =================================================================
-solve_puzzle(Board):-
+solve_puzzle(Board, Runtime):-
+    % --- START STATISTICS ---
+    %statistics - runtime calculation (ms) 
+    statistics(runtime, [Start|_]),
     % --- DECISION VARIABLES ---
     % length is already defined by Board
     apply_solver_domain(Board),
@@ -88,4 +91,8 @@ solve_puzzle(Board):-
     % --- LABELING ---
     % flatten Board into a 1 dimensional list
     append(Board, FlatBoard),
-    labeling([], FlatBoard).
+    labeling([], FlatBoard),
+    % --- END STATISTICS ---
+    %statistics - runtime calculation (ms) 
+    statistics(runtime, [Stop|_]),
+    Runtime is Stop - Start.
