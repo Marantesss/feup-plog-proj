@@ -76,7 +76,10 @@ generate_random_solution(Size, Board):-
     append(Board, FlatBoard),
     labeling([value(random_value)], FlatBoard).
 
-generate_random_puzzle(Size, PuzzleBoard):-
+generate_random_puzzle(Size, PuzzleBoard, Runtime):-
+    % --- START STATISTICS ---
+    %statistics - runtime calculation (ms) 
+    statistics(runtime, [Start|_]),
     % generate random solution
     generate_random_solution(Size, SolutionBoard),
     % find hints from solution board
@@ -84,7 +87,11 @@ generate_random_puzzle(Size, PuzzleBoard):-
     % generate empty board
     generate_board(Size, PuzzleBoard),
     % populate puzzle from hints found
-    populate_puzzle(PuzzleBoard, HintColumns, HintValues).
+    populate_puzzle(PuzzleBoard, HintColumns, HintValues),
+    % --- END STATISTICS ---
+    %statistics - runtime calculation (ms) 
+    statistics(runtime, [Stop|_]),
+    Runtime is Stop - Start.
 
 % =================================================================
 % Labeling Options
